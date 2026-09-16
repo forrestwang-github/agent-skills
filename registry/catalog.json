@@ -20,7 +20,7 @@
       "name": "model-private-skill",
       "path": "skills/work/model-private-skill",
       "version": "1.0.0",
-      "release_tag": null,
+      "release_tag": "model-private-skill-v1.0.0",
       "description": "规划模型私有化推理所需的厂商中立资源和拓扑。"
     },
     {
