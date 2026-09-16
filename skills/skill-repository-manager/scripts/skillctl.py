@@ -21,6 +21,10 @@ from typing import Any
 
 
 DEFAULT_REPO_ROOT = Path(r"E:\AI Workspace\skills")
+REGISTRY_DIR = "registry"
+CATALOG_FILE = Path(REGISTRY_DIR) / "catalog.json"
+REPOSITORY_FILE = Path(REGISTRY_DIR) / "repository.json"
+SKILLS_DIR = "skills"
 FRONTMATTER_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)", re.S)
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SEMVER_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
@@ -52,7 +56,7 @@ def find_repo_root(value: str | None) -> Path:
         root = Path(value).expanduser().resolve()
     else:
         candidates = [Path.cwd(), *Path(__file__).resolve().parents, DEFAULT_REPO_ROOT]
-        root = next((p for p in candidates if (p / "catalog.json").is_file()), DEFAULT_REPO_ROOT)
+        root = next((p for p in candidates if (p / CATALOG_FILE).is_file()), DEFAULT_REPO_ROOT)
         root = root.resolve()
     if not root.is_dir():
         raise SkillCtlError(f"Repository root not found: {root}")
@@ -75,7 +79,7 @@ def write_json(path: Path, value: Any) -> None:
 
 
 def catalog(root: Path) -> dict[str, Any]:
-    data = load_json(root / "catalog.json")
+    data = load_json(root / CATALOG_FILE)
     if data.get("schema_version") != 1 or not isinstance(data.get("skills"), list):
         raise SkillCtlError("Unsupported catalog.json schema")
     return data
@@ -107,8 +111,8 @@ def validate_skill(root: Path, name: str) -> dict[str, Any]:
     skill_dir = (root / entry.get("path", name)).resolve()
     errors: list[str] = []
     warnings: list[str] = []
-    if skill_dir.parent != root.resolve():
-        errors.append("Skill path must be a direct child of repository root")
+    if skill_dir.parent != (root / SKILLS_DIR).resolve():
+        errors.append(f"Skill path must be a direct child of repository {SKILLS_DIR}/ directory")
     skill_md = skill_dir / "SKILL.md"
     if not skill_md.is_file():
         errors.append("SKILL.md not found")
@@ -289,7 +293,7 @@ def command_link(args: argparse.Namespace, root: Path) -> dict[str, Any]:
 
 
 def resolve_remote_catalog(repo: str) -> dict[str, Any]:
-    result = run(["gh", "api", f"repos/{repo}/contents/catalog.json", "--jq", ".content"])
+    result = run(["gh", "api", f"repos/{repo}/contents/{CATALOG_FILE.as_posix()}", "--jq", ".content"])
     try:
         return json.loads(base64.b64decode(result.stdout.strip()).decode("utf-8"))
     except Exception as exc:
@@ -297,7 +301,7 @@ def resolve_remote_catalog(repo: str) -> dict[str, Any]:
 
 
 def remote_entry(root: Path, name: str) -> dict[str, Any]:
-    repo = load_json(root / "repository.json")["github_repository"]
+    repo = load_json(root / REPOSITORY_FILE)["github_repository"]
     for entry in resolve_remote_catalog(repo).get("skills", []):
         if entry.get("name") == name:
             return entry
@@ -315,7 +319,7 @@ def materialize_source(root: Path, name: str, source_kind: str, ref: str | None)
     entry = catalog_entry(root, name) if source_kind == "local" else remote_entry(root, name)
     if source_kind == "local":
         return root / entry.get("path", name), None, entry
-    repo_info = load_json(root / "repository.json")
+    repo_info = load_json(root / REPOSITORY_FILE)
     repo = repo_info["github_repository"]
     selected_ref = ref or entry.get("release_tag")
     if not selected_ref:
@@ -357,7 +361,7 @@ def install_or_update(args: argparse.Namespace, root: Path, updating: bool) -> d
                 shutil.move(str(backup), str(target))
             raise
         installed_digest = tree_digest(target)
-        lock.setdefault("skills", {})[args.skill] = {"repository": load_json(root / "repository.json")["github_repository"], "path": entry.get("path", args.skill), "installed_version": entry.get("version"), "installed_ref": args.ref or entry.get("release_tag") or "local", "content_sha256": installed_digest, "installed_at": dt.datetime.now(dt.timezone.utc).isoformat(), "source": args.source}
+        lock.setdefault("skills", {})[args.skill] = {"repository": load_json(root / REPOSITORY_FILE)["github_repository"], "path": entry.get("path", args.skill), "installed_version": entry.get("version"), "installed_ref": args.ref or entry.get("release_tag") or "local", "content_sha256": installed_digest, "installed_at": dt.datetime.now(dt.timezone.utc).isoformat(), "source": args.source}
         save_lock(dest_root, lock)
         return {"ok": True, "preview": False, **preview, "backup": str(backup) if backup else None, "content_sha256": installed_digest}
     finally:
@@ -420,8 +424,10 @@ def command_release(args: argparse.Namespace, root: Path) -> dict[str, Any]:
     current = entry["version"]
     target_version = bump_version(current, args.bump, args.version)
     tag = f"{args.skill}-v{target_version}"
-    branch = load_json(root / "repository.json").get("default_branch", "main")
-    unexpected = [p for p in git_changes(root) if not (p == "catalog.json" or p == args.skill or p.startswith(args.skill + "/"))]
+    branch = load_json(root / REPOSITORY_FILE).get("default_branch", "main")
+    skill_path = str(entry.get("path", f"{SKILLS_DIR}/{args.skill}")).replace("\\", "/")
+    catalog_path = CATALOG_FILE.as_posix()
+    unexpected = [p for p in git_changes(root) if not (p == catalog_path or p == skill_path or p.startswith(skill_path + "/"))]
     if unexpected:
         raise SkillCtlError(f"Unrelated working tree changes block release: {unexpected}")
     if run(["git", "tag", "--list", tag], cwd=root).stdout.strip():
@@ -436,11 +442,11 @@ def command_release(args: argparse.Namespace, root: Path) -> dict[str, Any]:
         if item["name"] == args.skill:
             item["version"] = target_version
             item["release_tag"] = tag
-    write_json(root / "catalog.json", data)
+    write_json(root / CATALOG_FILE, data)
     post_validation = validate_skill(root, args.skill)
     if not post_validation["valid"]:
         raise SkillCtlError(f"Post-version validation failed: {post_validation['errors']}")
-    run(["git", "add", "--", args.skill, "catalog.json"], cwd=root)
+    run(["git", "add", "--", skill_path, catalog_path], cwd=root)
     staged = run(["git", "diff", "--cached", "--name-only"], cwd=root).stdout.strip()
     if not staged:
         raise SkillCtlError("Release has no staged changes")
@@ -449,8 +455,8 @@ def command_release(args: argparse.Namespace, root: Path) -> dict[str, Any]:
     run(["git", "tag", "-a", tag, "-m", plan["release_title"]], cwd=root)
     run(["git", "push", "origin", tag], cwd=root)
     notes_args = ["--notes-file", args.notes_file] if args.notes_file else ["--generate-notes"]
-    run(["gh", "release", "create", tag, "--repo", load_json(root / "repository.json")["github_repository"], "--title", plan["release_title"], *notes_args], cwd=root)
-    run(["gh", "release", "view", tag, "--repo", load_json(root / "repository.json")["github_repository"], "--json", "url,tagName"], cwd=root)
+    run(["gh", "release", "create", tag, "--repo", load_json(root / REPOSITORY_FILE)["github_repository"], "--title", plan["release_title"], *notes_args], cwd=root)
+    run(["gh", "release", "view", tag, "--repo", load_json(root / REPOSITORY_FILE)["github_repository"], "--json", "url,tagName"], cwd=root)
     return {"ok": True, "preview": False, **plan, "published": True}
 
 

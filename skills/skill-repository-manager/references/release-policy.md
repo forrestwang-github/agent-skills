@@ -23,7 +23,7 @@
 - Git 仓库、远程和当前分支符合配置。
 - GitHub CLI 已登录。
 - 标签不存在。
-- 未提交改动仅限目标 Skill 和 `catalog.json`。
+- 未提交改动仅限 `skills/<skill-name>` 和 `registry/catalog.json`。
 - 不包含密钥、令牌、私钥或不应公开的本地资料。
 
 ## 发布预览
@@ -34,7 +34,6 @@
 
 ## 发布事务
 
-顺序为：更新 `catalog.json`、校验、提交目标 Skill 与清单、推送分支、创建并推送标签、创建 GitHub Release、远程核验。
+顺序为：更新 `registry/catalog.json`、校验、提交目标 Skill 与清单、推送分支、创建并推送标签、创建 GitHub Release、远程核验。
 
 不强制推送、不覆盖标签、不自动删除远程对象。部分失败时保留已经成功的不可逆步骤并报告可安全重试的环节。
-
