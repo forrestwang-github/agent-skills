@@ -13,7 +13,7 @@
       "name": "book-knowledge-guide",
       "path": "skills/personal-learning/book-knowledge-guide",
       "version": "1.0.0",
-      "release_tag": null,
+      "release_tag": "book-knowledge-guide-v1.0.0",
       "description": "深度解读非虚构书籍并沉淀到 Obsidian。"
     },
     {
