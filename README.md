@@ -9,7 +9,7 @@
 <!-- skill-catalog:start -->
 | Skill | 分类 | 最新稳定版 | 安装 | 用途 |
 |---|---|---|---|---|
-| [`aliyun-bill-analysis-skill`](skills/work/aliyun-bill-analysis-skill/) | work | 未正式发布 | [查看 main](skills/work/aliyun-bill-analysis-skill/) | 分析阿里云账单并生成费用、用量及趋势报告。 |
+| [`aliyun-bill-analysis-skill`](skills/work/aliyun-bill-analysis-skill/) | work | [`v1.0.0`](https://github.com/forrestwang-github/agent-skills/releases/tag/aliyun-bill-analysis-skill-v1.0.0) | [固定版本](https://github.com/forrestwang-github/agent-skills/tree/aliyun-bill-analysis-skill-v1.0.0/skills/work/aliyun-bill-analysis-skill) | 分析阿里云账单并生成费用、用量及趋势报告。 |
 | [`model-private-skill`](skills/work/model-private-skill/) | work | 未正式发布 | [查看 main](skills/work/model-private-skill/) | 规划模型私有化推理所需的厂商中立资源和拓扑。 |
 | [`book-knowledge-guide`](skills/personal-learning/book-knowledge-guide/) | personal-learning | 未正式发布 | [查看 main](skills/personal-learning/book-knowledge-guide/) | 深度解读非虚构书籍并沉淀到 Obsidian。 |
 | [`tech-factor-analysis-html-report`](skills/personal-learning/tech-factor-analysis-html-report/) | personal-learning | 未正式发布 | [查看 main](skills/personal-learning/tech-factor-analysis-html-report/) | 研究技术主题并生成知识库 Markdown 与 HTML 报告。 |

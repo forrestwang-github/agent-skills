@@ -6,7 +6,7 @@
       "name": "aliyun-bill-analysis-skill",
       "path": "skills/work/aliyun-bill-analysis-skill",
       "version": "1.0.0",
-      "release_tag": null,
+      "release_tag": "aliyun-bill-analysis-skill-v1.0.0",
       "description": "分析阿里云账单并生成费用、用量及趋势报告。"
     },
     {
