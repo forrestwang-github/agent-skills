@@ -23,7 +23,7 @@ python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root .
 
 发布顺序为：
 
-1. 更新 `registry/catalog.json` 中的版本和标签。
+1. 更新 `registry/catalog.json` 中的版本和标签，并同步 README 的稳定版链接。
 2. 重新校验目标 Skill。
 3. 提交并推送 `main`。
 4. 创建并推送带注释标签。

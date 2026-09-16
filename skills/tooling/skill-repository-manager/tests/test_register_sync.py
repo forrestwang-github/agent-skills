@@ -60,6 +60,8 @@ class RegisterSyncTests(unittest.TestCase):
             "license\n",
         )
         self.assertIn("A sample skill.", (self.root / "README.md").read_text(encoding="utf-8"))
+        self.assertIn("未正式发布", (self.root / "README.md").read_text(encoding="utf-8"))
+        self.assertIn("[查看 main](skills/work/sample-skill/)", (self.root / "README.md").read_text(encoding="utf-8"))
 
         (self.root / "skills" / "work" / "sample-skill" / "LICENSE").write_text("wrong\n", encoding="utf-8")
         readme = (self.root / "README.md").read_text(encoding="utf-8")

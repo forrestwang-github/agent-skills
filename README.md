@@ -7,13 +7,13 @@
 ## Skill 目录
 
 <!-- skill-catalog:start -->
-| Skill | 分类 | 用途 |
-|---|---|---|
-| [`aliyun-bill-analysis-skill`](skills/work/aliyun-bill-analysis-skill/) | work | 分析阿里云账单并生成费用、用量及趋势报告。 |
-| [`model-private-skill`](skills/work/model-private-skill/) | work | 规划模型私有化推理所需的厂商中立资源和拓扑。 |
-| [`book-knowledge-guide`](skills/personal-learning/book-knowledge-guide/) | personal-learning | 深度解读非虚构书籍并沉淀到 Obsidian。 |
-| [`tech-factor-analysis-html-report`](skills/personal-learning/tech-factor-analysis-html-report/) | personal-learning | 研究技术主题并生成知识库 Markdown 与 HTML 报告。 |
-| [`skill-repository-manager`](skills/tooling/skill-repository-manager/) | tooling | 通过对话校验、安装、更新和发布个人 Skill。 |
+| Skill | 分类 | 最新稳定版 | 安装 | 用途 |
+|---|---|---|---|---|
+| [`aliyun-bill-analysis-skill`](skills/work/aliyun-bill-analysis-skill/) | work | 未正式发布 | [查看 main](skills/work/aliyun-bill-analysis-skill/) | 分析阿里云账单并生成费用、用量及趋势报告。 |
+| [`model-private-skill`](skills/work/model-private-skill/) | work | 未正式发布 | [查看 main](skills/work/model-private-skill/) | 规划模型私有化推理所需的厂商中立资源和拓扑。 |
+| [`book-knowledge-guide`](skills/personal-learning/book-knowledge-guide/) | personal-learning | 未正式发布 | [查看 main](skills/personal-learning/book-knowledge-guide/) | 深度解读非虚构书籍并沉淀到 Obsidian。 |
+| [`tech-factor-analysis-html-report`](skills/personal-learning/tech-factor-analysis-html-report/) | personal-learning | 未正式发布 | [查看 main](skills/personal-learning/tech-factor-analysis-html-report/) | 研究技术主题并生成知识库 Markdown 与 HTML 报告。 |
+| [`skill-repository-manager`](skills/tooling/skill-repository-manager/) | tooling | 未正式发布 | [查看 main](skills/tooling/skill-repository-manager/) | 通过对话校验、安装、更新和发布个人 Skill。 |
 <!-- skill-catalog:end -->
 
 当前版本和正式发布标签以 [`registry/catalog.json`](registry/catalog.json) 为准。

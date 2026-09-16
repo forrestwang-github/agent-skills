@@ -118,14 +118,30 @@ def catalog_sort_key(entry: dict[str, Any]) -> tuple[int, str, str]:
 
 
 def render_readme_catalog(data: dict[str, Any]) -> str:
-    lines = [README_START, "| Skill | 分类 | 用途 |", "|---|---|---|"]
+    repository = str(data.get("repository", "")).strip()
+    lines = [
+        README_START,
+        "| Skill | 分类 | 最新稳定版 | 安装 | 用途 |",
+        "|---|---|---|---|---|",
+    ]
     for entry in sorted(data["skills"], key=catalog_sort_key):
         name = str(entry["name"])
         path = str(entry["path"]).replace("\\", "/")
         parts = Path(path).parts
         category = parts[1] if len(parts) >= 3 else ""
         description = " ".join(str(entry.get("description", "")).split()).replace("|", "\\|")
-        lines.append(f"| [`{name}`]({path}/) | {category} | {description} |")
+        version = str(entry.get("version", ""))
+        release_tag = entry.get("release_tag")
+        if release_tag and repository:
+            tag = str(release_tag)
+            version_cell = f"[`v{version}`](https://github.com/{repository}/releases/tag/{tag})"
+            install_cell = f"[固定版本](https://github.com/{repository}/tree/{tag}/{path})"
+        else:
+            version_cell = "未正式发布"
+            install_cell = f"[查看 main]({path}/)"
+        lines.append(
+            f"| [`{name}`]({path}/) | {category} | {version_cell} | {install_cell} | {description} |"
+        )
     lines.append(README_END)
     return "\n".join(lines)
 
@@ -620,10 +636,11 @@ def command_release(args: argparse.Namespace, root: Path) -> dict[str, Any]:
             item["version"] = target_version
             item["release_tag"] = tag
     write_json(root / CATALOG_FILE, data)
+    sync_readme_catalog(root, data)
     post_validation = validate_skill(root, args.skill)
     if not post_validation["valid"]:
         raise SkillCtlError(f"Post-version validation failed: {post_validation['errors']}")
-    run(["git", "add", "--", skill_path, catalog_path], cwd=root)
+    run(["git", "add", "--", skill_path, catalog_path, "README.md"], cwd=root)
     staged = run(["git", "diff", "--cached", "--name-only"], cwd=root).stdout.strip()
     if not staged:
         raise SkillCtlError("Release has no staged changes")
