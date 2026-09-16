@@ -40,6 +40,7 @@ description: 通过自然语言管理本地 Skill 源码仓库和各 Agent 的�
 | 安装 Skill | `install` |
 | 更新已安装 Skill | `update` |
 | 回滚最近更新 | `rollback` |
+| 验收已发布版本 | `verify-release` |
 | 准备发布 | `release`，不传 `--yes` |
 | 确认发布 | 用相同参数再次执行 `release --yes` |
 
@@ -63,4 +64,4 @@ description: 通过自然语言管理本地 Skill 源码仓库和各 Agent 的�
 
 ## 完成验证
 
-每次修改操作后再次执行相应只读命令，确认目标版本、路径、链接或发布状态。告诉用户何时需要新建 Agent 会话才能加载变更。
+正式发布会等待对应的 GitHub Actions 打包任务，并验证 Release、ZIP、SHA-256 和固定版本目录链接。若发布在远端步骤部分失败，不删除已创建的提交、标签或 Release；修复外部问题后使用 `verify-release` 重新验收。每次修改操作后再次执行相应只读命令，确认目标版本、路径、链接或发布状态。告诉用户何时需要新建 Agent 会话才能加载变更。

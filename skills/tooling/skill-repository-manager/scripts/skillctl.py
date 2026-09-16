@@ -15,6 +15,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
+import urllib.parse
 import urllib.request
 from pathlib import Path
 from typing import Any
@@ -607,6 +609,81 @@ def git_changes(root: Path) -> list[str]:
     return [line[3:].replace("\\", "/") for line in result.stdout.splitlines() if line.strip()]
 
 
+def validate_release_assets(tag: str, assets: list[dict[str, Any]]) -> dict[str, str]:
+    expected = {f"{tag}.zip", f"{tag}.sha256"}
+    uploaded = {
+        str(asset.get("name")): str(asset.get("url", ""))
+        for asset in assets
+        if asset.get("state") == "uploaded" and asset.get("url")
+    }
+    missing = sorted(expected - uploaded.keys())
+    if missing:
+        raise SkillCtlError(f"Release assets are incomplete: {missing}")
+    return {name: uploaded[name] for name in sorted(expected)}
+
+
+def command_verify_release(args: argparse.Namespace, root: Path) -> dict[str, Any]:
+    entry = catalog_entry(root, args.skill)
+    tag = args.tag or entry.get("release_tag")
+    if not tag:
+        raise SkillCtlError(f"No release tag is recorded for {args.skill}")
+    expected_prefix = f"{args.skill}-v"
+    if not str(tag).startswith(expected_prefix):
+        raise SkillCtlError(f"Release tag does not match skill: {tag}")
+    repo = load_json(root / REPOSITORY_FILE)["github_repository"]
+    deadline = time.monotonic() + max(0, args.wait_seconds)
+    workflow: dict[str, Any] | None = None
+    while True:
+        runs = json.loads(
+            run([
+                "gh", "run", "list", "--repo", repo, "--workflow", "release-skill.yml",
+                "--limit", "30", "--json", "databaseId,headBranch,status,conclusion,url",
+            ]).stdout
+        )
+        workflow = next((item for item in runs if item.get("headBranch") == tag), None)
+        if workflow and workflow.get("status") == "completed":
+            break
+        if time.monotonic() >= deadline:
+            state = workflow.get("status") if workflow else "not-found"
+            raise SkillCtlError(f"Timed out waiting for release workflow ({state}): {tag}")
+        time.sleep(min(5, max(0.1, deadline - time.monotonic())))
+    if workflow.get("conclusion") != "success":
+        raise SkillCtlError(
+            f"Release workflow did not succeed ({workflow.get('conclusion')}): {workflow.get('url')}"
+        )
+    release = json.loads(
+        run([
+            "gh", "release", "view", str(tag), "--repo", repo,
+            "--json", "url,tagName,assets",
+        ]).stdout
+    )
+    if release.get("tagName") != tag:
+        raise SkillCtlError(f"Release tag mismatch: {release.get('tagName')} != {tag}")
+    assets = validate_release_assets(str(tag), release.get("assets", []))
+    skill_path = str(entry["path"]).replace("\\", "/")
+    encoded_path = "/".join(urllib.parse.quote(part, safe="") for part in skill_path.split("/"))
+    encoded_tag = urllib.parse.quote(str(tag), safe="")
+    run(["gh", "api", f"repos/{repo}/contents/{encoded_path}?ref={encoded_tag}"])
+    install_url = f"https://github.com/{repo}/tree/{tag}/{skill_path}"
+    return {
+        "ok": True,
+        "operation": "verify-release",
+        "skill": args.skill,
+        "tag": tag,
+        "workflow": workflow,
+        "release_url": release["url"],
+        "assets": assets,
+        "install_url": install_url,
+        "checks": {
+            "workflow_succeeded": True,
+            "release_exists": True,
+            "zip_uploaded": True,
+            "sha256_uploaded": True,
+            "install_link_accessible": True,
+        },
+    }
+
+
 def command_release(args: argparse.Namespace, root: Path) -> dict[str, Any]:
     if not (root / ".git").exists():
         raise SkillCtlError("Repository has not been initialized with Git")
@@ -649,9 +726,20 @@ def command_release(args: argparse.Namespace, root: Path) -> dict[str, Any]:
     run(["git", "tag", "-a", tag, "-m", plan["release_title"]], cwd=root)
     run(["git", "push", "origin", tag], cwd=root)
     notes_args = ["--notes-file", args.notes_file] if args.notes_file else ["--generate-notes"]
-    run(["gh", "release", "create", tag, "--repo", load_json(root / REPOSITORY_FILE)["github_repository"], "--title", plan["release_title"], *notes_args], cwd=root)
-    run(["gh", "release", "view", tag, "--repo", load_json(root / REPOSITORY_FILE)["github_repository"], "--json", "url,tagName"], cwd=root)
-    return {"ok": True, "preview": False, **plan, "published": True}
+    repo = load_json(root / REPOSITORY_FILE)["github_repository"]
+    existing_release = run(["gh", "release", "view", tag, "--repo", repo], cwd=root, check=False)
+    if existing_release.returncode != 0:
+        created = run(
+            ["gh", "release", "create", tag, "--repo", repo, "--title", plan["release_title"], *notes_args],
+            cwd=root,
+            check=False,
+        )
+        if created.returncode != 0:
+            run(["gh", "release", "view", tag, "--repo", repo], cwd=root)
+    final_verification = command_verify_release(
+        argparse.Namespace(skill=args.skill, tag=tag, wait_seconds=args.wait_seconds), root
+    )
+    return {"ok": True, "preview": False, **plan, "published": True, "verification": final_verification}
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -703,6 +791,11 @@ def build_parser() -> argparse.ArgumentParser:
     rollback.add_argument("--dest")
     rollback.add_argument("--yes", action="store_true")
 
+    verify_release = sub.add_parser("verify-release")
+    verify_release.add_argument("skill")
+    verify_release.add_argument("--tag")
+    verify_release.add_argument("--wait-seconds", type=int, default=300)
+
     release = sub.add_parser("release")
     release.add_argument("skill")
     release_group = release.add_mutually_exclusive_group(required=True)
@@ -710,6 +803,7 @@ def build_parser() -> argparse.ArgumentParser:
     release_group.add_argument("--version")
     release.add_argument("--commit-message")
     release.add_argument("--notes-file")
+    release.add_argument("--wait-seconds", type=int, default=300)
     release.add_argument("--yes", action="store_true")
     return parser
 
@@ -739,6 +833,8 @@ def main() -> int:
             payload = install_or_update(args, root, updating=True)
         elif args.command == "rollback":
             payload = command_rollback(args, root)
+        elif args.command == "verify-release":
+            payload = command_verify_release(args, root)
         elif args.command == "release":
             payload = command_release(args, root)
         else:

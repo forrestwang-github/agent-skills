@@ -35,6 +35,8 @@
 
 ## 发布事务
 
-顺序为：更新 `registry/catalog.json`、同步 README 稳定版链接、校验、提交目标 Skill 与清单、推送分支、创建并推送标签、创建 GitHub Release、远程核验。
+顺序为：更新 `registry/catalog.json`、同步 README 稳定版链接、校验、提交目标 Skill 与清单、推送分支、创建并推送标签、创建 GitHub Release、等待打包工作流、核验 ZIP、SHA-256 和固定版本链接。
+
+发布后的验收失败不代表前序远端操作已回滚。保留已创建的提交、标签和 Release，排除网络或 Actions 问题后使用 `verify-release` 重试只读验收。
 
 不强制推送、不覆盖标签、不自动删除远程对象。部分失败时保留已经成功的不可逆步骤并报告可安全重试的环节。
