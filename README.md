@@ -7,18 +7,61 @@
 ## Skill 目录
 
 <!-- skill-catalog:start -->
-| Skill | 分类 | 最新稳定版 | 安装 | 用途 |
-|---|---|---|---|---|
-| [`aliyun-bill-analysis-skill`](skills/work/aliyun-bill-analysis-skill/) | work | [`v1.0.0`](https://github.com/forrestwang-github/agent-skills/releases/tag/aliyun-bill-analysis-skill-v1.0.0) | [固定版本](https://github.com/forrestwang-github/agent-skills/tree/aliyun-bill-analysis-skill-v1.0.0/skills/work/aliyun-bill-analysis-skill) | 分析阿里云账单并生成费用、用量及趋势报告。 |
-| [`model-private-skill`](skills/work/model-private-skill/) | work | [`v1.0.0`](https://github.com/forrestwang-github/agent-skills/releases/tag/model-private-skill-v1.0.0) | [固定版本](https://github.com/forrestwang-github/agent-skills/tree/model-private-skill-v1.0.0/skills/work/model-private-skill) | 规划模型私有化推理所需的厂商中立资源和拓扑。 |
-| [`book-knowledge-guide`](skills/personal-learning/book-knowledge-guide/) | personal-learning | [`v1.0.0`](https://github.com/forrestwang-github/agent-skills/releases/tag/book-knowledge-guide-v1.0.0) | [固定版本](https://github.com/forrestwang-github/agent-skills/tree/book-knowledge-guide-v1.0.0/skills/personal-learning/book-knowledge-guide) | 深度解读非虚构书籍并沉淀到 Obsidian。 |
-| [`tech-factor-analysis-html-report`](skills/personal-learning/tech-factor-analysis-html-report/) | personal-learning | [`v2.0.1`](https://github.com/forrestwang-github/agent-skills/releases/tag/tech-factor-analysis-html-report-v2.0.1) | [固定版本](https://github.com/forrestwang-github/agent-skills/tree/tech-factor-analysis-html-report-v2.0.1/skills/personal-learning/tech-factor-analysis-html-report) | 研究技术主题并生成知识库 Markdown 与 HTML 报告。 |
-| [`skill-repository-manager`](skills/tooling/skill-repository-manager/) | tooling | [`v1.1.0`](https://github.com/forrestwang-github/agent-skills/releases/tag/skill-repository-manager-v1.1.0) | [固定版本](https://github.com/forrestwang-github/agent-skills/tree/skill-repository-manager-v1.1.0/skills/tooling/skill-repository-manager) | 通过对话校验、安装、更新和发布个人 Skill。 |
+<table>
+  <thead>
+    <tr><th>分类</th><th>Skill</th><th>最新稳定版</th><th>安装</th><th>用途</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="1">工具（tooling）</td>
+      <td><a href="skills/tooling/skill-repository-manager/"><code>skill-repository-manager</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/releases/tag/skill-repository-manager-v1.1.0"><code>v1.1.0</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/tree/skill-repository-manager-v1.1.0/skills/tooling/skill-repository-manager">固定版本</a></td>
+      <td>通过对话校验、安装、更新和发布个人 Skill。</td>
+    </tr>
+    <tr>
+      <td rowspan="2">工作（work）</td>
+      <td><a href="skills/work/aliyun-bill-analysis-skill/"><code>aliyun-bill-analysis-skill</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/releases/tag/aliyun-bill-analysis-skill-v1.0.0"><code>v1.0.0</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/tree/aliyun-bill-analysis-skill-v1.0.0/skills/work/aliyun-bill-analysis-skill">固定版本</a></td>
+      <td>分析阿里云账单并生成费用、用量及趋势报告。</td>
+    </tr>
+    <tr>
+      <td><a href="skills/work/model-private-skill/"><code>model-private-skill</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/releases/tag/model-private-skill-v1.0.0"><code>v1.0.0</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/tree/model-private-skill-v1.0.0/skills/work/model-private-skill">固定版本</a></td>
+      <td>规划模型私有化推理所需的厂商中立资源和拓扑。</td>
+    </tr>
+    <tr>
+      <td rowspan="2">个人学习（personal-learning）</td>
+      <td><a href="skills/personal-learning/book-knowledge-guide/"><code>book-knowledge-guide</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/releases/tag/book-knowledge-guide-v1.0.0"><code>v1.0.0</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/tree/book-knowledge-guide-v1.0.0/skills/personal-learning/book-knowledge-guide">固定版本</a></td>
+      <td>深度解读非虚构书籍并沉淀到 Obsidian。</td>
+    </tr>
+    <tr>
+      <td><a href="skills/personal-learning/tech-factor-analysis-html-report/"><code>tech-factor-analysis-html-report</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/releases/tag/tech-factor-analysis-html-report-v2.0.1"><code>v2.0.1</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/tree/tech-factor-analysis-html-report-v2.0.1/skills/personal-learning/tech-factor-analysis-html-report">固定版本</a></td>
+      <td>研究技术主题并生成知识库 Markdown 与 HTML 报告。</td>
+    </tr>
+  </tbody>
+</table>
 <!-- skill-catalog:end -->
 
 当前版本和正式发布标签以 [`registry/catalog.json`](registry/catalog.json) 为准。
 
-## 快速开始
+## 选择使用方式
+
+这里有三种不同场景，不需要为了安装一个 Skill 而先安装管理器：
+
+| 你的目的 | 推荐方式 |
+|---|---|
+| 只安装一个或少量 Skill | 直接把上方“固定版本”链接交给 Agent，不需要 `skill-repository-manager` |
+| 长期管理多个 Skill，需要检查更新、比较差异或回滚 | 先安装 `skill-repository-manager`，再通过对话管理其他 Skill |
+| 开发并发布本仓库中的 Skill | 在本地仓库中使用 `skill-repository-manager` 的登记、校验和发布能力 |
+
+## 快速开始：安装单个 Skill
 
 1. 在上方表格中点击目标 Skill 的“固定版本”。
 2. 复制打开后的 GitHub 子目录地址。
@@ -27,9 +70,9 @@
 
 固定版本子目录适合交给 Agent 安装；Release 页面中的 ZIP 适合手动下载、审查和归档。`main` 仅用于评估尚未发布的开发内容。
 
-## 安装和更新
+## 使用管理器安装和更新
 
-安装 `skill-repository-manager` 后，可以直接告诉 Agent：
+`skill-repository-manager` 是可选的管理工具，不是安装其他 Skill 的前置条件。只有在需要持续管理多个 Skill 时，才建议先用上面的固定版本链接安装它；安装完成并新建会话后，可以直接告诉 Agent：
 
 - 检查某个 Skill 是否有更新。
 - 安装或更新某个 Skill。

@@ -11,6 +11,20 @@ SPEC.loader.exec_module(SKILLCTL)
 
 
 class ReleaseAssetTests(unittest.TestCase):
+    def test_catalog_groups_categories_and_places_manager_first(self):
+        catalog = {
+            "repository": "example/skills",
+            "skills": [
+                {"name": "helper", "path": "skills/tooling/helper", "version": "1.0.0", "release_tag": None, "description": "Helper."},
+                {"name": "work-a", "path": "skills/work/work-a", "version": "1.0.0", "release_tag": None, "description": "Work A."},
+                {"name": "skill-repository-manager", "path": "skills/tooling/skill-repository-manager", "version": "1.1.0", "release_tag": None, "description": "Manager."},
+            ],
+        }
+        rendered = SKILLCTL.render_readme_catalog(catalog)
+        self.assertLess(rendered.index("skill-repository-manager"), rendered.index("helper"))
+        self.assertLess(rendered.index("helper"), rendered.index("work-a"))
+        self.assertIn('<td rowspan="2">工具（tooling）</td>', rendered)
+
     def test_accepts_uploaded_zip_and_checksum(self):
         tag = "sample-skill-v1.2.3"
         assets = [

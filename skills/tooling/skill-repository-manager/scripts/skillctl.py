@@ -8,6 +8,7 @@ import base64
 import datetime as dt
 import difflib
 import hashlib
+import html
 import json
 import os
 import re
@@ -115,36 +116,64 @@ def parse_frontmatter(skill_md: Path) -> dict[str, str]:
 def catalog_sort_key(entry: dict[str, Any]) -> tuple[int, str, str]:
     path = Path(str(entry.get("path", "")))
     category = path.parts[1] if len(path.parts) >= 3 else ""
-    category_order = {"work": 0, "personal-learning": 1, "tooling": 2}
-    return category_order.get(category, 99), category, str(entry.get("name", ""))
+    category_order = {"tooling": 0, "work": 1, "personal-learning": 2}
+    name = str(entry.get("name", ""))
+    manager_order = "0" if name == "skill-repository-manager" else "1"
+    return category_order.get(category, 99), category, manager_order + name
 
 
 def render_readme_catalog(data: dict[str, Any]) -> str:
     repository = str(data.get("repository", "")).strip()
+    entries = sorted(data["skills"], key=catalog_sort_key)
+    category_counts: dict[str, int] = {}
+    for entry in entries:
+        parts = Path(str(entry.get("path", ""))).parts
+        category = parts[1] if len(parts) >= 3 else ""
+        category_counts[category] = category_counts.get(category, 0) + 1
+    category_labels = {
+        "tooling": "工具（tooling）",
+        "work": "工作（work）",
+        "personal-learning": "个人学习（personal-learning）",
+    }
     lines = [
         README_START,
-        "| Skill | 分类 | 最新稳定版 | 安装 | 用途 |",
-        "|---|---|---|---|---|",
+        "<table>",
+        "  <thead>",
+        "    <tr><th>分类</th><th>Skill</th><th>最新稳定版</th><th>安装</th><th>用途</th></tr>",
+        "  </thead>",
+        "  <tbody>",
     ]
-    for entry in sorted(data["skills"], key=catalog_sort_key):
+    rendered_categories: set[str] = set()
+    for entry in entries:
         name = str(entry["name"])
         path = str(entry["path"]).replace("\\", "/")
         parts = Path(path).parts
         category = parts[1] if len(parts) >= 3 else ""
-        description = " ".join(str(entry.get("description", "")).split()).replace("|", "\\|")
+        description = html.escape(" ".join(str(entry.get("description", "")).split()))
         version = str(entry.get("version", ""))
         release_tag = entry.get("release_tag")
         if release_tag and repository:
             tag = str(release_tag)
-            version_cell = f"[`v{version}`](https://github.com/{repository}/releases/tag/{tag})"
-            install_cell = f"[固定版本](https://github.com/{repository}/tree/{tag}/{path})"
+            version_cell = f'<a href="https://github.com/{repository}/releases/tag/{tag}"><code>v{html.escape(version)}</code></a>'
+            install_cell = f'<a href="https://github.com/{repository}/tree/{tag}/{path}">固定版本</a>'
         else:
             version_cell = "未正式发布"
-            install_cell = f"[查看 main]({path}/)"
-        lines.append(
-            f"| [`{name}`]({path}/) | {category} | {version_cell} | {install_cell} | {description} |"
-        )
-    lines.append(README_END)
+            install_cell = f'<a href="{path}/">查看 main</a>'
+        lines.append("    <tr>")
+        if category not in rendered_categories:
+            category_label = category_labels.get(category, category)
+            lines.append(
+                f'      <td rowspan="{category_counts[category]}">{html.escape(category_label)}</td>'
+            )
+            rendered_categories.add(category)
+        lines.extend([
+            f'      <td><a href="{path}/"><code>{html.escape(name)}</code></a></td>',
+            f"      <td>{version_cell}</td>",
+            f"      <td>{install_cell}</td>",
+            f"      <td>{description}</td>",
+            "    </tr>",
+        ])
+    lines.extend(["  </tbody>", "</table>", README_END])
     return "\n".join(lines)
 
 
