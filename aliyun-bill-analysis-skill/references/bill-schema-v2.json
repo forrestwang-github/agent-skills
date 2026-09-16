@@ -1,0 +1,58 @@
+{
+  "schema_version": "aliyun-consume-detail-v2.1",
+  "analysis_fields": {
+    "billing_month": {
+      "source": "账单信息/账单月份",
+      "required": true
+    },
+    "billing_type_raw": {
+      "source": "账单信息/费用类型",
+      "required": true
+    },
+    "product_code": {
+      "source": "产品信息/产品Code",
+      "required": true
+    },
+    "product_name": {
+      "source": "产品信息/产品名称",
+      "required": true
+    },
+    "item_code": {
+      "source": "产品信息/计费项Code",
+      "required_for": "PayAsYouGo"
+    },
+    "item_name": {
+      "source": "产品信息/计费项名称",
+      "required_for": "PayAsYouGo"
+    },
+    "payable_amount": {
+      "source": "应付信息/应付金额（含税）",
+      "required": true
+    },
+    "usage": {
+      "source": "用量信息/用量",
+      "column_required": true,
+      "value_nullable": true
+    },
+    "usage_unit": {
+      "source": "用量信息/用量单位",
+      "column_required": true,
+      "value_nullable": true
+    }
+  },
+  "optional_dimensions": {
+    "region_code": "资源信息/地域Code",
+    "region_name": "资源信息/地域",
+    "transaction_type": "账单信息/交易类型"
+  },
+  "validation_fields": {
+    "line_item_id": "标识信息/账单明细ID",
+    "account_id": "身份信息/资源购买账号ID",
+    "currency": "定价信息/定价币种",
+    "gross_amount": "费用信息/目录总价",
+    "subscription_deduction_gross": "订阅抵扣信息/订阅抵扣目录总价",
+    "discount_amount": "优惠信息/优惠金额",
+    "coupon_amount": "优惠券抵扣信息/优惠券抵扣金额",
+    "amount_after_discount": "优惠信息/优惠后金额"
+  }
+}

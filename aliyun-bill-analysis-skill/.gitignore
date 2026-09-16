@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+scripts/venv/
+output/
+local-fixtures/
+config/config.json
+tests/tmp/
+*.log

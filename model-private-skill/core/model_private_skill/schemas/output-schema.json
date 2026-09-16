@@ -1,0 +1,415 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.skill/model-private-skill/output-schema-1.5.json",
+  "title": "Platform-neutral Model Private Inference Capacity Plan 1.5",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_summary",
+    "assumptions",
+    "evidence",
+    "plans",
+    "risks",
+    "benchmark_plan"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.5"},
+    "request_summary": {"$ref": "#/$defs/request_summary"},
+    "assumptions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/assumption"}
+    },
+    "evidence": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/evidence"}
+    },
+    "plans": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "allOf": [
+            {"$ref": "#/$defs/plan"},
+            {"properties": {"tier": {"const": "economic"}}}
+          ]
+        },
+        {
+          "allOf": [
+            {"$ref": "#/$defs/plan"},
+            {"properties": {"tier": {"const": "peak_production"}}}
+          ]
+        }
+      ]
+    },
+    "risks": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/risk"}
+    },
+    "benchmark_plan": {"$ref": "#/$defs/benchmark_plan"}
+  },
+  "$defs": {
+    "nullable_number": {
+      "type": ["number", "null"]
+    },
+    "nullable_integer": {
+      "type": ["integer", "null"]
+    },
+    "nullable_string": {
+      "type": ["string", "null"]
+    },
+    "request_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_id",
+        "model_revision",
+        "typical_input_tokens",
+        "max_input_tokens",
+        "typical_output_tokens",
+        "max_output_tokens",
+        "typical_active_concurrency",
+        "peak_active_concurrency",
+        "peak_duration_hours_per_day",
+        "typical_rps",
+        "peak_rps",
+        "response_mode",
+        "typical_response_rps",
+        "peak_response_rps",
+        "target_ttft_ms_p95",
+        "target_output_tps_per_request",
+        "derived_target_itl_ms",
+        "quantization_policy"
+      ],
+      "properties": {
+        "model_id": {"type": "string", "minLength": 1},
+        "model_revision": {"$ref": "#/$defs/nullable_string"},
+        "typical_input_tokens": {"$ref": "#/$defs/nullable_integer"},
+        "max_input_tokens": {"$ref": "#/$defs/nullable_integer"},
+        "typical_output_tokens": {"$ref": "#/$defs/nullable_integer"},
+        "max_output_tokens": {"$ref": "#/$defs/nullable_integer"},
+        "typical_active_concurrency": {"$ref": "#/$defs/nullable_integer"},
+        "peak_active_concurrency": {"$ref": "#/$defs/nullable_integer"},
+        "peak_duration_hours_per_day": {"$ref": "#/$defs/nullable_number"},
+        "typical_rps": {"$ref": "#/$defs/nullable_number"},
+        "peak_rps": {"$ref": "#/$defs/nullable_number"},
+        "response_mode": {"enum": ["streaming", "non_streaming"]},
+        "typical_response_rps": {"$ref": "#/$defs/nullable_number"},
+        "peak_response_rps": {"$ref": "#/$defs/nullable_number"},
+        "target_ttft_ms_p95": {"$ref": "#/$defs/nullable_number"},
+        "target_output_tps_per_request": {"$ref": "#/$defs/nullable_number"},
+        "derived_target_itl_ms": {"$ref": "#/$defs/nullable_number"},
+        "quantization_policy": {
+          "enum": ["preserve", "validated_only", "cost_first"]
+        }
+      }
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["item", "value", "impact"],
+      "properties": {
+        "item": {"type": "string"},
+        "value": {"type": "string"},
+        "impact": {"type": "string"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "category",
+        "publisher",
+        "source_type",
+        "title",
+        "url",
+        "published_at",
+        "accessed_at",
+        "revision",
+        "match_level",
+        "supports"
+      ],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "category": {"enum": ["model", "gpu", "engine", "benchmark"]},
+        "publisher": {"type": "string", "minLength": 1},
+        "source_type": {
+          "enum": [
+            "official_artifact",
+            "official_documentation",
+            "official_repository",
+            "official_datasheet",
+            "official_benchmark",
+            "reproducible_benchmark",
+            "user_supplied"
+          ]
+        },
+        "title": {"type": "string"},
+        "url": {"type": "string"},
+        "published_at": {"$ref": "#/$defs/nullable_string"},
+        "accessed_at": {"type": "string"},
+        "revision": {"$ref": "#/$defs/nullable_string"},
+        "match_level": {"enum": ["exact", "similar", "spec-only"]},
+        "supports": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "deployment_framework": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version_or_commit", "reason", "required_features", "evidence_ids"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version_or_commit": {"$ref": "#/$defs/nullable_string"},
+        "reason": {"type": "string", "minLength": 1},
+        "required_features": {"type": "array", "items": {"type": "string"}},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "precision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "weights",
+        "kv_cache",
+        "quantization_scheme",
+        "quality_validation_required"
+      ],
+      "properties": {
+        "weights": {"type": "string"},
+        "kv_cache": {"type": "string"},
+        "quantization_scheme": {"$ref": "#/$defs/nullable_string"},
+        "quality_validation_required": {"type": "boolean"}
+      }
+    },
+    "gpu_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gpus_per_replica",
+        "gpus_per_replica_by_memory",
+        "gpus_per_replica_by_performance",
+        "replicas",
+        "total_gpus",
+        "minimum_vram_per_gpu_gb",
+        "required_vram_per_replica_gb",
+        "aggregate_nominal_vram_per_replica_gb",
+        "required_precision_features",
+        "intra_node_interconnect",
+        "inter_node_rdma_required",
+        "minimum_inter_node_bandwidth_gbps"
+      ],
+      "properties": {
+        "gpus_per_replica": {"type": "integer", "minimum": 1},
+        "gpus_per_replica_by_memory": {"type": "integer", "minimum": 1},
+        "gpus_per_replica_by_performance": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "replicas": {"type": "integer", "minimum": 1},
+        "total_gpus": {"type": "integer", "minimum": 1},
+        "minimum_vram_per_gpu_gb": {"type": "number", "exclusiveMinimum": 0},
+        "required_vram_per_replica_gb": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "aggregate_nominal_vram_per_replica_gb": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "required_precision_features": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "intra_node_interconnect": {"type": "string"},
+        "inter_node_rdma_required": {"type": "boolean"},
+        "minimum_inter_node_bandwidth_gbps": {
+          "$ref": "#/$defs/nullable_number"
+        }
+      }
+    },
+    "gpu_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalog_id",
+        "vendor",
+        "model",
+        "form_factor",
+        "vram_gb",
+        "quantity_per_replica",
+        "evidence_ids",
+        "notes"
+      ],
+      "properties": {
+        "catalog_id": {"type": "string"},
+        "vendor": {"type": "string"},
+        "model": {"type": "string"},
+        "form_factor": {"type": "string"},
+        "vram_gb": {"type": "number", "exclusiveMinimum": 0},
+        "quantity_per_replica": {"type": "integer", "minimum": 1},
+        "evidence_ids": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "notes": {"type": "string"}
+      }
+    },
+    "node_configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gpus_per_node",
+        "nodes_per_replica",
+        "total_nodes",
+        "vcpu_per_node",
+        "total_vcpu",
+        "memory_gb_per_node",
+        "total_memory_gb",
+        "system_disk_gb_per_node",
+        "total_system_disk_gb",
+        "model_disk_gb_per_node",
+        "total_model_disk_gb",
+        "shared_storage_gb",
+        "public_access_ingress_peak_mbps",
+        "public_access_egress_peak_mbps",
+        "public_access_bandwidth_mbps",
+        "public_access_response_mode"
+      ],
+      "properties": {
+        "gpus_per_node": {"type": "integer", "minimum": 1},
+        "nodes_per_replica": {"type": "integer", "minimum": 1},
+        "total_nodes": {"type": "integer", "minimum": 1},
+        "vcpu_per_node": {"type": "integer", "minimum": 1},
+        "total_vcpu": {"type": "integer", "minimum": 1},
+        "memory_gb_per_node": {"type": "integer", "minimum": 1},
+        "total_memory_gb": {"type": "integer", "minimum": 1},
+        "system_disk_gb_per_node": {"type": "integer", "minimum": 1},
+        "total_system_disk_gb": {"type": "integer", "minimum": 1},
+        "model_disk_gb_per_node": {"type": "integer", "minimum": 1},
+        "total_model_disk_gb": {"type": "integer", "minimum": 1},
+        "shared_storage_gb": {"type": "integer", "minimum": 0},
+        "public_access_ingress_peak_mbps": {"$ref": "#/$defs/nullable_number"},
+        "public_access_egress_peak_mbps": {"$ref": "#/$defs/nullable_number"},
+        "public_access_bandwidth_mbps": {"$ref": "#/$defs/nullable_number"},
+        "public_access_response_mode": {"enum": ["streaming", "non_streaming"]}
+      }
+    },
+    "topology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tensor_parallel",
+        "pipeline_parallel",
+        "data_parallel",
+        "replicas",
+        "load_balancing",
+        "failure_mode"
+      ],
+      "properties": {
+        "tensor_parallel": {"type": "integer", "minimum": 1},
+        "pipeline_parallel": {"type": "integer", "minimum": 1},
+        "data_parallel": {"type": "integer", "minimum": 1},
+        "replicas": {"type": "integer", "minimum": 1},
+        "load_balancing": {"enum": ["none", "active-active"]},
+        "failure_mode": {"type": "string"}
+      }
+    },
+    "expected_performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "ttft_ms_p95",
+        "itl_ms_p95",
+        "output_tps_per_request",
+        "prefill_tps_total",
+        "decode_tps_total",
+        "evidence_ids"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["verified", "estimated", "benchmark_required"]
+        },
+        "ttft_ms_p95": {"$ref": "#/$defs/nullable_number"},
+        "itl_ms_p95": {"$ref": "#/$defs/nullable_number"},
+        "output_tps_per_request": {"$ref": "#/$defs/nullable_number"},
+        "prefill_tps_total": {"$ref": "#/$defs/nullable_number"},
+        "decode_tps_total": {"$ref": "#/$defs/nullable_number"},
+        "evidence_ids": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tier",
+        "precision",
+        "deployment_framework",
+        "gpu_requirements",
+        "gpu_candidates",
+        "node_configuration",
+        "topology",
+        "expected_performance",
+        "confidence"
+      ],
+      "properties": {
+        "tier": {"enum": ["economic", "peak_production"]},
+        "precision": {"$ref": "#/$defs/precision"},
+        "deployment_framework": {"$ref": "#/$defs/deployment_framework"},
+        "gpu_requirements": {"$ref": "#/$defs/gpu_requirements"},
+        "gpu_candidates": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {"$ref": "#/$defs/gpu_candidate"}
+        },
+        "node_configuration": {"$ref": "#/$defs/node_configuration"},
+        "topology": {"$ref": "#/$defs/topology"},
+        "expected_performance": {"$ref": "#/$defs/expected_performance"},
+        "confidence": {"enum": ["high", "medium", "low"]}
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "description", "mitigation"],
+      "properties": {
+        "category": {"type": "string"},
+        "description": {"type": "string"},
+        "mitigation": {"type": "string"}
+      }
+    },
+    "benchmark_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "matrix",
+        "acceptance_criteria",
+        "scale_out_triggers"
+      ],
+      "properties": {
+        "required": {"type": "boolean"},
+        "matrix": {
+          "type": "array",
+          "items": {"type": "object"}
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "scale_out_triggers": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    }
+  }
+}

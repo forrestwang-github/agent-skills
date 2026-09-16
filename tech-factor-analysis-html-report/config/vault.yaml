@@ -1,0 +1,9 @@
+default_target: "workspace"
+workspace_note_root: "knowledge"
+workspace_html_root: "exports/html"
+copy_to_obsidian_only_when_explicit: true
+obsidian_vault_path: "E:/Obsidian Vault/AI_Cloud Knowledge"
+obsidian_map_root: "知识地图"
+obsidian_note_root: "技术笔记"
+obsidian_html_root: "导出/HTML"
+domain_subfolders: true

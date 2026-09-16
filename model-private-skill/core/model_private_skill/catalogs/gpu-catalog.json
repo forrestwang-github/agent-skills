@@ -1,0 +1,342 @@
+{
+  "schema_version": "1.0",
+  "catalog_type": "platform_neutral_gpu_hardware_v1",
+  "reviewed_at": "2026-07-29",
+  "review_policy": {
+    "final_spec_recheck_days": 90,
+    "preliminary_recheck_on_every_use": true,
+    "dynamic_fields_excluded": [
+      "model_performance",
+      "model_or_engine_compatibility",
+      "cloud_sku",
+      "inventory",
+      "price",
+      "sales_or_export_status"
+    ]
+  },
+  "devices": [
+    {
+      "id": "nvidia-b200-sxm-180gb",
+      "vendor": "NVIDIA",
+      "model": "B200",
+      "form_factor": "SXM",
+      "architecture": "Blackwell",
+      "memory_gb": 180,
+      "memory_type": "HBM3e",
+      "memory_bandwidth_gb_s": 8000,
+      "precision_features": ["BF16", "FP16", "FP8", "FP4", "INT8"],
+      "dense_compute": {"fp8_tflops": 4500},
+      "sparse_compute": {"fp8_tflops": 9000},
+      "host_interface": "HGX baseboard",
+      "scale_up_interconnect": {
+        "name": "NVLink 5 / NVSwitch",
+        "bandwidth_gb_s": 1800,
+        "bandwidth_scope": "per_gpu_bidirectional",
+        "max_devices": 8
+      },
+      "tdp_w": null,
+      "partitioning": "MIG",
+      "spec_status": "final",
+      "source": {
+        "title": "NVIDIA HGX AI Factory Components",
+        "url": "https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html",
+        "published_at": null,
+        "accessed_at": "2026-07-29"
+      },
+      "notes": "180 GB and up to 8 TB/s are per GPU; model and engine compatibility must be verified dynamically."
+    },
+    {
+      "id": "nvidia-h200-sxm-141gb",
+      "vendor": "NVIDIA",
+      "model": "H200",
+      "form_factor": "SXM",
+      "architecture": "Hopper",
+      "memory_gb": 141,
+      "memory_type": "HBM3e",
+      "memory_bandwidth_gb_s": 4800,
+      "precision_features": ["BF16", "FP16", "FP8", "INT8"],
+      "dense_compute": {
+        "bf16_tflops": 989.5,
+        "fp16_tflops": 989.5,
+        "fp8_tflops": 1979,
+        "int8_tops": 1979
+      },
+      "sparse_compute": {
+        "bf16_tflops": 1979,
+        "fp16_tflops": 1979,
+        "fp8_tflops": 3958,
+        "int8_tops": 3958
+      },
+      "host_interface": "PCIe Gen5 128 GB/s",
+      "scale_up_interconnect": {
+        "name": "NVLink 4 / NVSwitch",
+        "bandwidth_gb_s": 900,
+        "bandwidth_scope": "per_gpu_bidirectional",
+        "max_devices": 8
+      },
+      "tdp_w": 700,
+      "partitioning": "MIG",
+      "spec_status": "preliminary",
+      "source": {
+        "title": "NVIDIA H200 Tensor Core GPU",
+        "url": "https://www.nvidia.com/en-gb/data-center/h200/",
+        "published_at": null,
+        "accessed_at": "2026-07-29"
+      },
+      "notes": "NVIDIA product page labels the detailed table as preliminary; recheck before every use."
+    },
+    {
+      "id": "nvidia-h100-sxm-80gb",
+      "vendor": "NVIDIA",
+      "model": "H100",
+      "form_factor": "SXM",
+      "architecture": "Hopper",
+      "memory_gb": 80,
+      "memory_type": "HBM3",
+      "memory_bandwidth_gb_s": 3350,
+      "precision_features": ["BF16", "FP16", "FP8", "INT8"],
+      "dense_compute": {
+        "bf16_tflops": 989.5,
+        "fp16_tflops": 989.5,
+        "fp8_tflops": 1979,
+        "int8_tops": 1979
+      },
+      "sparse_compute": {
+        "bf16_tflops": 1979,
+        "fp16_tflops": 1979,
+        "fp8_tflops": 3958,
+        "int8_tops": 3958
+      },
+      "host_interface": "PCIe Gen5 128 GB/s",
+      "scale_up_interconnect": {
+        "name": "NVLink 4 / NVSwitch",
+        "bandwidth_gb_s": 900,
+        "bandwidth_scope": "per_gpu_bidirectional",
+        "max_devices": 8
+      },
+      "tdp_w": 700,
+      "partitioning": "MIG",
+      "spec_status": "final",
+      "source": {
+        "title": "NVIDIA H100 GPU",
+        "url": "https://www.nvidia.com/en-us/data-center/h100/",
+        "published_at": null,
+        "accessed_at": "2026-07-29"
+      },
+      "notes": "Exact SXM 80 GB variant; do not mix with H100 NVL 94 GB."
+    },
+    {
+      "id": "nvidia-a100-sxm-80gb",
+      "vendor": "NVIDIA",
+      "model": "A100",
+      "form_factor": "SXM4",
+      "architecture": "Ampere",
+      "memory_gb": 80,
+      "memory_type": "HBM2e",
+      "memory_bandwidth_gb_s": 2039,
+      "precision_features": ["BF16", "FP16", "INT8", "INT4"],
+      "dense_compute": {
+        "bf16_tflops": 312,
+        "fp16_tflops": 312,
+        "int8_tops": 624
+      },
+      "sparse_compute": {
+        "bf16_tflops": 624,
+        "fp16_tflops": 624,
+        "int8_tops": 1248
+      },
+      "host_interface": "PCIe Gen4 64 GB/s",
+      "scale_up_interconnect": {
+        "name": "NVLink 3 / NVSwitch",
+        "bandwidth_gb_s": 600,
+        "bandwidth_scope": "per_gpu_bidirectional",
+        "max_devices": 8
+      },
+      "tdp_w": 400,
+      "partitioning": "MIG",
+      "spec_status": "final",
+      "source": {
+        "title": "NVIDIA A100 Tensor Core GPU Datasheet",
+        "url": "https://images.nvidia.com/data-center/a100/a100-datasheet.pdf",
+        "published_at": "2021-04-01",
+        "accessed_at": "2026-07-29"
+      },
+      "notes": "Exact SXM 80 GB variant; A100 does not provide native FP8 Tensor Core support."
+    },
+    {
+      "id": "nvidia-l40s-pcie-48gb",
+      "vendor": "NVIDIA",
+      "model": "L40S",
+      "form_factor": "PCIe",
+      "architecture": "Ada Lovelace",
+      "memory_gb": 48,
+      "memory_type": "GDDR6 ECC",
+      "memory_bandwidth_gb_s": 864,
+      "precision_features": ["BF16", "FP16", "FP8", "INT8", "INT4"],
+      "dense_compute": {
+        "bf16_tflops": 362.05,
+        "fp16_tflops": 362.05,
+        "fp8_tflops": 733,
+        "int8_tops": 733
+      },
+      "sparse_compute": {
+        "bf16_tflops": 733,
+        "fp16_tflops": 733,
+        "fp8_tflops": 1466,
+        "int8_tops": 1466
+      },
+      "host_interface": "PCIe Gen4 x16 64 GB/s",
+      "scale_up_interconnect": null,
+      "tdp_w": 350,
+      "partitioning": "vGPU; no MIG",
+      "spec_status": "final",
+      "source": {
+        "title": "NVIDIA L40S GPU Specifications",
+        "url": "https://www.nvidia.com/en-au/data-center/l40s/",
+        "published_at": null,
+        "accessed_at": "2026-07-29"
+      },
+      "notes": "No NVLink support; multi-GPU tensor parallel requires explicit PCIe performance validation."
+    },
+    {
+      "id": "amd-mi325x-oam-256gb",
+      "vendor": "AMD",
+      "model": "Instinct MI325X",
+      "form_factor": "OAM",
+      "architecture": "CDNA 3",
+      "memory_gb": 256,
+      "memory_type": "HBM3e",
+      "memory_bandwidth_gb_s": 6000,
+      "precision_features": ["BF16", "FP16", "FP8", "INT8"],
+      "dense_compute": {
+        "bf16_tflops": 1307.4,
+        "fp16_tflops": 1307.4,
+        "fp8_tflops": 2614.9,
+        "int8_tops": 2614.9
+      },
+      "sparse_compute": {
+        "bf16_tflops": 2614.9,
+        "fp16_tflops": 2614.9,
+        "fp8_tflops": 5229.8,
+        "int8_tops": 5229.8
+      },
+      "host_interface": "PCIe Gen5 x16 128 GB/s",
+      "scale_up_interconnect": {
+        "name": "Infinity Fabric",
+        "bandwidth_gb_s": 896,
+        "bandwidth_scope": "eight_gpu_platform_aggregate_bidirectional",
+        "max_devices": 8
+      },
+      "tdp_w": 1000,
+      "partitioning": "SR-IOV",
+      "spec_status": "final",
+      "source": {
+        "title": "AMD Instinct MI325X Platform Datasheet",
+        "url": "https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/product-briefs/instinct-mi325x-platform-datasheet.pdf",
+        "published_at": null,
+        "accessed_at": "2026-07-29"
+      },
+      "notes": "Scale-up value is the 8-GPU platform aggregate; validate runtime and model support in ROCm."
+    },
+    {
+      "id": "amd-mi300x-oam-192gb",
+      "vendor": "AMD",
+      "model": "Instinct MI300X",
+      "form_factor": "OAM",
+      "architecture": "CDNA 3",
+      "memory_gb": 192,
+      "memory_type": "HBM3",
+      "memory_bandwidth_gb_s": 5300,
+      "precision_features": ["BF16", "FP16", "FP8", "INT8"],
+      "dense_compute": {
+        "bf16_tflops": 1307.4,
+        "fp16_tflops": 1307.4,
+        "fp8_tflops": 2614.9,
+        "int8_tops": 2614.9
+      },
+      "sparse_compute": {
+        "bf16_tflops": 2614.9,
+        "fp16_tflops": 2614.9,
+        "fp8_tflops": 5229.8,
+        "int8_tops": 5229.8
+      },
+      "host_interface": "PCIe Gen5 x16 128 GB/s",
+      "scale_up_interconnect": {
+        "name": "Infinity Fabric",
+        "bandwidth_gb_s": 896,
+        "bandwidth_scope": "eight_gpu_platform_aggregate_bidirectional",
+        "max_devices": 8
+      },
+      "tdp_w": 750,
+      "partitioning": "SR-IOV",
+      "spec_status": "final",
+      "source": {
+        "title": "AMD Instinct MI300X Platform Datasheet",
+        "url": "https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/data-sheets/amd-instinct-mi300x-platform-data-sheet.pdf",
+        "published_at": null,
+        "accessed_at": "2026-07-29"
+      },
+      "notes": "Scale-up value is the 8-GPU platform aggregate; validate runtime and model support in ROCm."
+    },
+    {
+      "id": "intel-gaudi3-hl338-pcie-128gb",
+      "vendor": "Intel",
+      "model": "Gaudi 3 HL-338",
+      "form_factor": "PCIe",
+      "architecture": "5th Generation Tensor Processor Core",
+      "memory_gb": 128,
+      "memory_type": "HBM2e",
+      "memory_bandwidth_gb_s": 3700,
+      "precision_features": ["BF16", "FP16", "FP8"],
+      "dense_compute": {},
+      "sparse_compute": {},
+      "host_interface": "PCIe Gen5 x16 128 GB/s",
+      "scale_up_interconnect": {
+        "name": "Top Bridge / RoCE v2",
+        "bandwidth_gb_s": 900,
+        "bandwidth_scope": "per_card_top_bridge",
+        "max_devices": 4
+      },
+      "tdp_w": 600,
+      "partitioning": null,
+      "spec_status": "final",
+      "source": {
+        "title": "Intel Gaudi 3 AI Accelerator HL-338 Product Brief",
+        "url": "https://cdrdv2-public.intel.com/817488/Gaudi%203%20PCIe%20Product%20Brief_RB_1_V6.pdf",
+        "published_at": "2025-02-01",
+        "accessed_at": "2026-07-29"
+      },
+      "notes": "Top-bridge scale-up is limited to a four-card bank; model and SynapseAI compatibility are dynamic."
+    },
+    {
+      "id": "metax-c500-pcie-64gb",
+      "vendor": "MetaX",
+      "model": "C500",
+      "form_factor": "PCIe",
+      "architecture": null,
+      "memory_gb": 64,
+      "memory_type": "High-bandwidth memory with ECC",
+      "memory_bandwidth_gb_s": null,
+      "precision_features": [],
+      "dense_compute": {},
+      "sparse_compute": {},
+      "host_interface": "PCIe",
+      "scale_up_interconnect": {
+        "name": "MetaXLink",
+        "bandwidth_gb_s": null,
+        "bandwidth_scope": "not_publicly_specified",
+        "max_devices": 4
+      },
+      "tdp_w": 350,
+      "partitioning": "Software virtualization down to 1% granularity",
+      "spec_status": "final",
+      "source": {
+        "title": "沐曦曦云 C500 产品页",
+        "url": "https://www.metax-tech.com/prod.html?cid=107&id=21",
+        "published_at": null,
+        "accessed_at": "2026-07-29"
+      },
+      "notes": "Official public page omits exact precision formats and bandwidth; do not select deterministically until primary specifications and model compatibility are supplied."
+    }
+  ]
+}

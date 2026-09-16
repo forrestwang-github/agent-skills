@@ -1,0 +1,40 @@
+name: Validate skills
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate catalog and skills
+        run: python skill-repository-manager/scripts/skillctl.py --repo-root . --json verify --all
+
+  test-model-private-skill:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run unit tests
+        run: python -m unittest discover -s model-private-skill/tests -p "test_*.py"
+      - name: Validate example input
+        run: python model-private-skill/cli/model-private-skill.py validate-input --input model-private-skill/examples/7b-request.json
+      - name: Validate GPU catalog
+        run: python model-private-skill/cli/model-private-skill.py gpu validate

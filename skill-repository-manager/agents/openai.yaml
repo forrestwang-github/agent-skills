@@ -1,0 +1,5 @@
+interface:
+  display_name: "Skill 仓库管理"
+  short_description: "用对话校验、安装、更新和发布个人 Skill"
+  default_prompt: "使用 $skill-repository-manager 检查我的 Skill 仓库，并告诉我可安全执行的下一步。"
+

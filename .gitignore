@@ -1,0 +1,12 @@
+.skillctl.local.json
+.managed-skills.json
+.skillctl/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+dist/
+build/
+*.zip
+*.sha256
+

@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.skill/model-private-skill/input-schema-1.0.json",
+  "title": "Platform-neutral Model Private Inference Capacity Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "model",
+    "workload",
+    "slo",
+    "precision"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "architecture",
+        "parameters_b",
+        "active_parameters_b",
+        "artifact_gb",
+        "attention"
+      ],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "revision": {"type": ["string", "null"]},
+        "architecture": {"enum": ["dense", "moe"]},
+        "parameters_b": {"type": "number", "exclusiveMinimum": 0},
+        "active_parameters_b": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0
+        },
+        "artifact_gb": {"type": "number", "exclusiveMinimum": 0},
+        "attention": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "layers",
+            "kv_heads",
+            "head_dim",
+            "kv_bytes_per_token"
+          ],
+          "properties": {
+            "kind": {"enum": ["generic", "mla", "csa", "hca", "custom"]},
+            "layers": {"type": ["integer", "null"], "minimum": 1},
+            "kv_heads": {"type": ["integer", "null"], "minimum": 1},
+            "head_dim": {"type": ["integer", "null"], "minimum": 1},
+            "kv_bytes_per_token": {
+              "type": ["number", "null"],
+              "exclusiveMinimum": 0
+            }
+          }
+        }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "typical_input_tokens",
+        "max_input_tokens",
+        "typical_output_tokens",
+        "max_output_tokens",
+        "typical_active_concurrency",
+        "peak_active_concurrency",
+        "peak_duration_hours_per_day",
+        "max_length_concurrency",
+        "typical_rps",
+        "peak_rps"
+      ],
+      "properties": {
+        "typical_input_tokens": {"type": "integer", "minimum": 1},
+        "max_input_tokens": {"type": "integer", "minimum": 1},
+        "typical_output_tokens": {"type": "integer", "minimum": 1},
+        "max_output_tokens": {"type": "integer", "minimum": 1},
+        "typical_active_concurrency": {"type": "integer", "minimum": 1},
+        "peak_active_concurrency": {"type": "integer", "minimum": 1},
+        "peak_duration_hours_per_day": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 24
+        },
+        "max_length_concurrency": {"type": ["integer", "null"], "minimum": 1},
+        "typical_rps": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "peak_rps": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "typical_response_rps": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "peak_response_rps": {"type": ["number", "null"], "exclusiveMinimum": 0}
+      }
+    },
+    "slo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ttft_ms_p95", "output_tps_per_request"],
+      "properties": {
+        "ttft_ms_p95": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "output_tps_per_request": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "precision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "economic_weight_bits",
+        "peak_production_weight_bits",
+        "economic_kv_bits",
+        "peak_production_kv_bits",
+        "quantization_policy"
+      ],
+      "properties": {
+        "economic_weight_bits": {"type": "number", "exclusiveMinimum": 0},
+        "peak_production_weight_bits": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "economic_kv_bits": {"type": "number", "exclusiveMinimum": 0},
+        "peak_production_kv_bits": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "quantization_policy": {
+          "enum": ["preserve", "validated_only", "cost_first"]
+        }
+      }
+    },
+    "hardware_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gpu_vram_gb",
+        "max_gpus_per_node",
+        "supported_parallel_degrees"
+      ],
+      "properties": {
+        "gpu_vram_gb": {"type": "number", "exclusiveMinimum": 0},
+        "max_gpus_per_node": {"type": "integer", "minimum": 1},
+        "supported_parallel_degrees": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
+    "engineering": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workspace_ratio": {"type": "number", "minimum": 0},
+        "bytes_per_token": {"type": "number", "exclusiveMinimum": 0},
+        "protocol_overhead": {"type": "number", "exclusiveMinimum": 0},
+        "response_mode": {"enum": ["streaming", "non_streaming"]},
+        "failure_retains_full_peak": {"type": "boolean"}
+      }
+    },
+    "benchmarks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "economic": {"$ref": "#/$defs/benchmark"},
+        "peak_production": {"$ref": "#/$defs/benchmark"}
+      }
+    }
+  },
+  "$defs": {
+    "benchmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prefill_tps", "decode_tps", "gpus_per_replica", "match"],
+      "properties": {
+        "prefill_tps": {"type": "number", "exclusiveMinimum": 0},
+        "decode_tps": {"type": "number", "exclusiveMinimum": 0},
+        "gpus_per_replica": {"type": "integer", "minimum": 1},
+        "match": {"enum": ["exact", "similar"]}
+      }
+    }
+  }
+}

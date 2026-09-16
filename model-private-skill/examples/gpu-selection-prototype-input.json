@@ -1,0 +1,93 @@
+{
+  "simulation": true,
+  "purpose": "评审 GPU 候选生成与报告结构；不构成采购或性能结论。",
+  "model": {
+    "model_id": "qwen3.8-27b",
+    "artifact_id": "Qwen/Qwen3.8-27B",
+    "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "resident_parameters_b": 27,
+    "weight_precision": "BF16",
+    "artifact_gb": 55.6,
+    "layers": 64,
+    "kv_heads": 4,
+    "head_dim": 256,
+    "attention_profile": "Gated Attention + Gated DeltaNet; special-state memory requires measurement",
+    "modalities": ["text", "vision"],
+    "initial_context_limit_tokens": 65536
+  },
+  "service_requirements": {
+    "typical_active_concurrency": 8,
+    "peak_active_concurrency": 32,
+    "typical_input_tokens": 2048,
+    "typical_output_tokens": 512,
+    "max_input_tokens": 32768,
+    "max_output_tokens": 4096,
+    "max_length_concurrency": 32,
+    "target_ttft_ms_p95": 2000,
+    "target_output_tps_per_request": 30,
+    "input_shape": "text; vision requires a separate benchmark",
+    "availability": {
+      "economic_replicas": 1,
+      "peak_production_replicas": 2,
+      "peak_behavior_after_one_replica_failure": "degraded service is acceptable"
+    }
+  },
+  "deployment_constraints": {
+    "framework": "vLLM",
+    "precision": {
+      "weights": "BF16",
+      "kv_cache": "BF16",
+      "quantization_policy": "preserve"
+    },
+    "max_gpus_per_node": 8,
+    "prefer_single_node_per_replica": true,
+    "cross_node_tensor_parallel_allowed": false,
+    "cpu_offload_allowed": false
+  },
+  "calculation_assumptions": {
+    "economic_usable_vram_ratio": 0.9,
+    "peak_production_usable_vram_ratio": 0.85,
+    "workspace_ratio": 0.2,
+    "normal_attention_kv_bytes_per_token": 65536,
+    "average_bytes_per_token": 4,
+    "protocol_overhead": 1.3
+  },
+  "candidate_pool_for_simulation": [
+    {
+      "sku": "GPU-A-80-PCIE",
+      "role": "80GB PCIe candidate",
+      "nominal_vram_gb": 80,
+      "memory_bandwidth_class": "high",
+      "bf16": true,
+      "fp8": true,
+      "intra_node_interconnect": "PCIe only",
+      "supported_tp_degrees_in_simulation": [1, 2, 4]
+    },
+    {
+      "sku": "GPU-B-141-SXM",
+      "role": "141GB high-bandwidth candidate",
+      "nominal_vram_gb": 141,
+      "memory_bandwidth_class": "very high",
+      "bf16": true,
+      "fp8": true,
+      "intra_node_interconnect": "high-speed node-local fabric",
+      "supported_tp_degrees_in_simulation": [1, 2, 4, 8]
+    },
+    {
+      "sku": "GPU-C-48-PCIE",
+      "role": "48GB candidate",
+      "nominal_vram_gb": 48,
+      "memory_bandwidth_class": "medium",
+      "bf16": true,
+      "fp8": false,
+      "intra_node_interconnect": "PCIe only",
+      "supported_tp_degrees_in_simulation": [1, 2]
+    }
+  ],
+  "evidence_status": {
+    "model_facts": "official model card and fixed revision",
+    "gpu_facts": "simulation catalog only",
+    "framework_compatibility": "must be rechecked against official framework evidence",
+    "performance_benchmark": "not supplied; all performance results remain benchmark_required"
+  }
+}

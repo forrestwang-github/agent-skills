@@ -1,0 +1,25 @@
+schema_version: "1.0"
+name: "model-private-skill"
+version: "1.4.0"
+description: "先收集模型私有化推理需求，再生成包含硬件、GPU、部署框架和注意事项的两档容量方案。"
+runtime:
+  language: "python"
+  minimum_version: "3.10"
+  dependencies: []
+interfaces:
+  python:
+    package: "model_private_skill"
+    function: "calculate_request"
+  cli:
+    command: "model-private-skill calculate --input request.json"
+  prompt:
+    path: "prompts/system-prompt.md"
+schemas:
+  input: "core/model_private_skill/schemas/input-schema.json"
+  output: "core/model_private_skill/schemas/output-schema.json"
+resources:
+  gpu_catalog: "core/model_private_skill/catalogs/gpu-catalog.json"
+  references: "core/model_private_skill/references"
+  source_policy: "core/model_private_skill/references/source-policy.md"
+examples:
+  request: "examples/7b-request.json"

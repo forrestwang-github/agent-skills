@@ -1,0 +1,4 @@
+interface:
+  display_name: "阿里云账单分析"
+  short_description: "快速核对阿里云产品、计费方式、计费项、用量和费用趋势"
+  default_prompt: "Use $aliyun-bill-analysis-skill to analyze this Alibaba Cloud bill file and produce a verified Excel report."

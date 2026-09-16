@@ -1,0 +1,5 @@
+interface:
+  display_name: "书籍知识梳理"
+  short_description: "深度解读非虚构书籍并沉淀到 Obsidian"
+  default_prompt: "使用 $book-knowledge-guide 深度梳理这本书，并在确认后写入我的 Obsidian 书库。"
+

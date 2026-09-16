@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>GPU 候选生成输出原型</title>
+<style>
+body{max-width:1240px;margin:32px auto;padding:0 22px 48px;color:#1f2937;background:#f8fafc;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif}.plan{padding:30px;background:#fff;border:1px solid #e2e8f0;border-radius:14px}h1{margin:0;color:#0f172a;font-size:28px}h2{margin:30px 0 12px;padding-left:10px;border-left:4px solid #2563eb;font-size:20px}h3{margin:20px 0 8px;color:#1e3a8a;font-size:17px}h4{margin:14px 0 5px;font-size:15px}.muted{color:#64748b;font-size:13px}.note{padding:11px 13px;border-radius:8px;background:#eff6ff;color:#1e40af}.warn{padding:11px 13px;border-radius:8px;background:#fff7ed;color:#9a3412}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}.facts div{padding:7px 0;border-bottom:1px solid #e2e8f0}dt{color:#475569;font-size:13px}dd{margin:2px 0;color:#0f172a;font-weight:600}.card{padding:14px;border:1px solid #dbeafe;border-radius:10px;background:#f8fbff}.card dl{display:grid;grid-template-columns:7.5em 1fr;gap:5px 10px;margin:0}.card dd{font-weight:400}table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}caption{padding:8px 0;text-align:left;font-weight:700}th,td{padding:9px 10px;border:1px solid #cbd5e1;vertical-align:top;text-align:left}thead th{background:#e0e7ff;color:#1e3a8a}.pass{color:#166534;font-weight:700}.hold{color:#9a3412;font-weight:700}.fail{color:#b91c1c;font-weight:700}.formula{padding:9px 11px;background:#f1f5f9;border-radius:6px;font:13px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap}li{margin:6px 0}@media(max-width:760px){body{margin:0;padding:0}.plan{padding:18px;border:0;border-radius:0}.grid,.facts{grid-template-columns:1fr}table{display:block;overflow-x:auto}}
+</style></head><body><main class="plan">
+<h1>GPU 候选生成：完整输入/输出原型</h1>
+<p class="muted">评审用途。GPU SKU、互联支持和性能状态均为模拟数据；不构成采购、兼容性或性能结论。</p>
+
+<section><h2>一、已接收的完整输入</h2>
+<dl class="facts">
+<div><dt>模型与版本</dt><dd>qwen3.8-27b；固定 revision 1d4bf0f2</dd></div><div><dt>模型资料</dt><dd>27B Dense、BF16、制品 55.6GB、文本/视觉</dd></div>
+<div><dt>典型负载</dt><dd>并发 8；输入/输出 2,048/512 Token</dd></div><div><dt>峰值负载</dt><dd>并发 32；最大输入/输出 32,768/4,096 Token</dd></div>
+<div><dt>最大长度保护</dt><dd>同时执行最大长度请求 32 个</dd></div><div><dt>服务目标</dt><dd>P95 TTFT 2 秒；单请求 30 Token/s</dd></div>
+<div><dt>部署约束</dt><dd>vLLM、BF16、单副本优先单节点、最多 8 卡/节点</dd></div><div><dt>可用性</dt><dd>经济型 1 副本；生产型 2 副本 active-active</dd></div>
+<div><dt>候选 GPU 池</dt><dd>80GB PCIe、141GB 高速互联、48GB PCIe 三种模拟 SKU</dd></div><div><dt>已知证据缺口</dt><dd>无同条件性能基准；框架兼容性待官方复核</dd></div>
+</dl>
+<p class="note">实际使用时，模型资料和 GPU 固定规格由 skill 自动查询；用户主要填写负载、SLO、现有硬件或候选池约束。</p></section>
+
+<section><h2>二、资源配置结果</h2>
+<table><caption>由模型与负载自动推导；GPU 型号尚未参与本节估算</caption>
+<thead><tr><th>资源/指标</th><th>经济型</th><th>峰值生产型</th><th>结论来源</th></tr></thead><tbody>
+<tr><th>显存容量</th><td>基础规划 66.4GB/副本</td><td>最大长度口径 157.6GB/副本</td><td>权重、KV 下限、20% 工作区和有效显存比例</td></tr>
+<tr><th>CPU</th><td>16 vCPU/节点</td><td>64 vCPU/节点</td><td>GPU 服务进程、Tokenization 和预处理基线</td></tr>
+<tr><th>内存</th><td>128GB/节点</td><td>256GB/节点</td><td>模型加载、运行时缓存和回滚余量</td></tr>
+<tr><th>系统盘</th><td>100GB/节点</td><td>200GB/节点</td><td>操作系统、容器、日志与诊断文件</td></tr>
+<tr><th>模型盘</th><td>100GB/节点</td><td>200GB/节点</td><td>55.6GB 制品 × 版本数 × 20% 余量</td></tr>
+<tr><th>共享存储</th><td>100GB</td><td>300GB</td><td>版本分发、回滚与共享运行数据</td></tr>
+<tr><th>带宽</th><td>至少 1Gbps</td><td>文本至少 1Gbps；多模态建议 10Gbps</td><td>RPS、Token 字节数和协议开销；跨节点另算</td></tr>
+</tbody></table>
+<p class="note">此处的结果是 GPU 筛选器的输入。GPU 筛选器不会重新猜测资源需求，而是对这些门槛做通过、淘汰和组合。</p></section>
+
+<section><h2>三、GPU 候选生成过程</h2>
+<h3>第 1 关：硬性淘汰</h3>
+<table><thead><tr><th>模拟 SKU</th><th>精度</th><th>显存准入</th><th>多卡拓扑</th><th>结论</th></tr></thead><tbody>
+<tr><td>GPU-C-48-PCIE</td><td class="pass">BF16 通过</td><td class="fail">48GB 单卡不足</td><td class="hold">仅 TP=1/2</td><td class="fail">淘汰：不满足经济型单卡门槛，且不适合生产型 32 最大长度并发</td></tr>
+<tr><td>GPU-A-80-PCIE</td><td class="pass">BF16 通过</td><td class="pass">80×90%=72GB；覆盖经济型基础量</td><td class="hold">PCIe 多卡；TP=2/4 待框架复核</td><td class="hold">保留：仅经济型候选；生产型长上下文不推荐</td></tr>
+<tr><td>GPU-B-141-SXM</td><td class="pass">BF16 通过</td><td class="pass">141×85%=119.9GB；单卡不足生产型，2 卡可覆盖基础量</td><td class="pass">模拟支持 TP=2/4 与高速节点内互联</td><td class="pass">保留：生产型候选</td></tr>
+</tbody></table>
+
+<h3>第 2 关：从通过的卡生成部署变体</h3>
+<p class="formula">可用显存/卡 = 标称显存 × 有效显存比例
+显存卡数下限 = ceil(每副本所需显存 ÷ 可用显存/卡)
+每副本卡数 = 将下限向上对齐到框架支持的 TP/PP 度</p>
+<table><thead><tr><th>方案</th><th>每副本计算</th><th>拓扑</th><th>总 GPU</th><th>状态</th></tr></thead><tbody>
+<tr><td>经济型 A</td><td>ceil(66.4 ÷ 72) = 1</td><td>GPU-A-80-PCIE ×1；TP=1</td><td>1</td><td class="hold">容量通过；特殊状态与性能待压测</td></tr>
+<tr><td>生产型 B</td><td>ceil(157.6 ÷ 119.9) = 2</td><td>GPU-B-141-SXM ×2/副本；TP=2</td><td>4（双副本）</td><td class="hold">容量与模拟拓扑通过；框架和性能待复核</td></tr>
+<tr><td>生产型 C</td><td>保守扩展：4 卡/副本</td><td>GPU-B-141-SXM ×4/副本；TP=4</td><td>8（双副本）</td><td class="hold">为长上下文、特殊状态和性能留余量；待压测</td></tr>
+</tbody></table>
+</section>
+<section><h2>四、用户可直接采用的 GPU 候选清单</h2>
+<div class="grid">
+<article class="card"><h3>经济型 A：单卡容量方案</h3><dl><dt>候选 GPU</dt><dd>GPU-A-80-PCIE ×1/副本</dd><dt>通过原因</dt><dd>72GB 模拟可用显存高于 66.4GB 基础需求；BF16 通过；无需多卡互联。</dd><dt>适用边界</dt><dd>纯文本、典型并发 8、短于最大长度的常规请求。</dd><dt>自动判定</dt><dd>容量通过；软件兼容性和性能为待验证。</dd><dt>下一动作</dt><dd>先测特殊状态显存、P95 TTFT 和 8 并发生成速度。</dd></dl></article>
+<article class="card"><h3>生产型 B：最小多卡容量方案</h3><dl><dt>候选 GPU</dt><dd>GPU-B-141-SXM ×2/副本；双副本共 4 卡</dd><dt>通过原因</dt><dd>单副本模拟可用显存 239.8GB，高于 157.6GB 最大长度基础需求；模拟支持 TP=2。</dd><dt>适用边界</dt><dd>峰值并发 32、最大长度并发 32、允许故障后降级服务。</dd><dt>自动判定</dt><dd>容量与模拟互联通过；特殊算子、框架和性能待验证。</dd><dt>下一动作</dt><dd>复核 vLLM 对该 revision 的 TP=2 支持，再测 TP 通信和长上下文。</dd></dl></article>
+<article class="card"><h3>生产型 C：保守性能余量方案</h3><dl><dt>候选 GPU</dt><dd>GPU-B-141-SXM ×4/副本；双副本共 8 卡</dd><dt>通过原因</dt><dd>单副本模拟可用显存 479.6GB，为特殊状态、视觉输入和性能压测保留更多余量。</dd><dt>适用边界</dt><dd>长上下文、多模态、性能目标更严格或需降低显存风险的生产服务。</dd><dt>自动判定</dt><dd>容量与模拟拓扑通过；性能待验证。</dd><dt>下一动作</dt><dd>对照方案 B 压测，只有性能或显存证据支持时才保留更多卡数。</dd></dl></article>
+</div>
+<p class="warn"><strong>如何使用候选清单：</strong>用户无需自己比较所有 GPU 参数。若只能获得某几种卡，将它们传入候选池，skill 会自动输出“淘汰原因、可组成的每副本卡数、保留候选与待验证项”。</p></section>
+
+<section><h2>五、资源估算过程</h2>
+<p class="muted">只解释资源配置表中的资源建议；GPU 型号是上一节基于这些结果筛出的候选，不参与本节公式。</p>
+<h3>显存容量</h3><p><strong>计算输入：</strong>27B BF16 权重、典型/最大 Token、并发、KV 下限和 20% 工作区。</p><p class="formula">权重 = 27B × 16 ÷ 8 = 54GB
+经济型 KV = 8 × (2,048 + 512) × 65,536 bytes = 1.34GB
+经济型基础量 = (54 + 1.34) × 1.20 = 66.4GB
+生产型最大长度 KV = 32 × (32,768 + 4,096) × 65,536 bytes = 77.3GB
+生产型基础量 = (54 + 77.3) × 1.20 = 157.6GB</p><p><strong>结果与表格对应：</strong>资源表给出经济型 66.4GB/副本、峰值生产型 157.6GB/副本的基础显存门槛。特殊状态和视觉输入未量化，因此 GPU 候选还必须保留额外余量并压测。</p>
+
+<h3>CPU</h3><p><strong>计算输入：</strong>经济型单 GPU、生产型 2–4 GPU/节点、文本 Tokenization 与服务进程基线。</p><p class="formula">经济型 vCPU = max(16, 8 × GPU数/节点) = 16
+生产型 vCPU = max(32, 16 × GPU数/节点)；4 GPU/节点时 = 64</p><p><strong>结果与表格对应：</strong>资源表配置经济型 16 vCPU/节点、峰值生产型 64 vCPU/节点。仅纯文本低并发时可下调；视觉预处理或 CPU Offload 时应上调。</p>
+
+<h3>内存</h3><p><strong>计算输入：</strong>模型制品 55.6GB、运行时缓存、加载与回滚余量。</p><p class="formula">经济型下限 = max(128, ceil(55.6 × 1.25)) = 128GB
+生产型下限 = max(256, ceil(55.6 × 1.50)) = 256GB</p><p><strong>结果与表格对应：</strong>资源表配置 128GB/节点与 256GB/节点；这不是将模型常态 CPU Offload 到内存的容量承诺。</p>
+
+<h3>系统盘、模型盘与共享存储</h3><p class="formula">系统盘：经济型 100GB；生产型 200GB
+模型盘：经济型 ceil(55.6 × 1版本 × 1.2) = 67GB，配置 100GB
+模型盘：生产型 ceil(55.6 × 2版本 × 1.2) = 134GB，配置 200GB
+共享存储：按集中版本、回滚和共享数据预留；此例为 100GB / 300GB</p><p><strong>结果与表格对应：</strong>系统盘承担系统与日志，不能与其他盘合并；经济型可酌情合并模型盘和共享存储，生产型分离以支持版本分发和回滚。</p>
+
+<h3>带宽</h3><p class="formula">单请求时长 ≈ 2 + 512 ÷ 30 = 19.1 秒
+典型 RPS ≈ 8 ÷ 19.1 = 0.42；峰值 RPS ≈ 32 ÷ 19.1 = 1.68
+应用带宽 = RPS × (输入 Token + 输出 Token) × 4 bytes × 8 × 1.3 × 2</p><p><strong>结果与表格对应：</strong>纯文本应用流量低于 1Gbps，资源表统一取至少 1Gbps；视觉输入或跨节点并行另行测算，示例生产型建议预留 10Gbps。</p>
+</section>
+
+<section><h2>六、部署注意事项</h2><ul><li><strong>作用：</strong>说明本规划成立的边界，避免把默认输入误当成普遍结论。</li><li>初始上下文限制为 65,536 Token；开放 262K/1M 前必须重算显存并压测。</li><li>视觉输入、思考模式、量化和 Gated DeltaNet 状态会改变资源结论，应触发重新评估。</li><li>框架、模型 revision 和镜像必须固定；更换任一项后，兼容性和性能证据失效。</li></ul></section>
+
+<section><h2>七、压测与验收计划</h2><ul><li><strong>作用：</strong>把容量候选验证为可上线方案，而非重复解释理论。</li><li><strong>矩阵：</strong>输入 2K/32K，输出 512/4K，并发 1/8/32，最大长度并发 1/32，文本与视觉分开测试。</li><li><strong>监测：</strong>P95 TTFT、ITL、单请求 Token/s、总吞吐、峰值显存、错误率和长稳。</li><li><strong>决策：</strong>显存超出可用门槛则增加每副本卡数或降上下文；TTFT/吞吐不达标则调整卡型、并行度或副本数。</li></ul></section>
+
+<section><h2>八、模拟数据与待证据项</h2><ul><li>模型资料引用的是本线程的既有示例；GPU SKU、互联能力和候选结果均为模拟。</li><li>正式运行时，skill 只对最终 1–3 个候选查官方 GPU 规格、框架兼容性和性能证据。</li><li>没有同条件性能基准时，候选状态必须显示为 benchmark_required，不输出保证性 TTFT 或吞吐。</li></ul></section>
+</main></body></html>

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "model-private-skill"
+version = "1.4.0"
+description = "Platform-neutral private-model inference capacity planning core"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+model-private-skill = "model_private_skill.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "core"}
+
+[tool.setuptools.packages.find]
+where = ["core"]
+
+[tool.setuptools.package-data]
+model_private_skill = [
+  "catalogs/*.json",
+  "schemas/*.json",
+  "references/*.md"
+]

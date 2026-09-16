@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "mapping": {
+    "云资源按量费用": "PayAsYouGo",
+    "订阅预付费用": "Subscription",
+    "PayAsYouGo": "PayAsYouGo",
+    "Subscription": "Subscription",
+    "按量付费": "PayAsYouGo",
+    "后付费": "PayAsYouGo",
+    "包年包月": "Subscription"
+  },
+  "unknown_policy": "Other"
+}

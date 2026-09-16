@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "model": {
+    "id": "example/7b",
+    "revision": "replace-with-exact-revision",
+    "architecture": "dense",
+    "parameters_b": 7,
+    "active_parameters_b": null,
+    "artifact_gb": 15,
+    "attention": {
+      "kind": "generic",
+      "layers": 32,
+      "kv_heads": 8,
+      "head_dim": 128,
+      "kv_bytes_per_token": null
+    }
+  },
+  "workload": {
+    "typical_input_tokens": 2000,
+    "max_input_tokens": 8000,
+    "typical_output_tokens": 512,
+    "max_output_tokens": 2000,
+    "typical_active_concurrency": 8,
+    "peak_active_concurrency": 32,
+    "peak_duration_hours_per_day": 1,
+    "max_length_concurrency": null,
+    "typical_rps": null,
+    "peak_rps": null,
+    "typical_response_rps": null,
+    "peak_response_rps": null
+  },
+  "slo": {
+    "ttft_ms_p95": 2000,
+    "output_tps_per_request": 30
+  },
+  "precision": {
+    "economic_weight_bits": 16,
+    "peak_production_weight_bits": 16,
+    "economic_kv_bits": 16,
+    "peak_production_kv_bits": 16,
+    "quantization_policy": "preserve"
+  },
+  "hardware_profile": {
+    "gpu_vram_gb": 80,
+    "max_gpus_per_node": 8,
+    "supported_parallel_degrees": [1, 2, 4, 8, 16]
+  },
+  "engineering": {
+    "workspace_ratio": 0.2,
+    "bytes_per_token": 4,
+    "protocol_overhead": 1.3,
+    "response_mode": "streaming",
+    "failure_retains_full_peak": false
+  },
+  "benchmarks": {}
+}

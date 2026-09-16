@@ -1,0 +1,7 @@
+interface:
+  display_name: "技术学习与知识库报告"
+  short_description: "系统研究技术机制，并沉淀为可检索、可维护的个人知识库笔记"
+  default_prompt: "使用 $tech-factor-analysis-html-report 系统研究这个技术主题，并生成适合 Obsidian 的 Markdown 知识笔记。"
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,4 @@
+interface:
+  display_name: "模型私有化配置规划"
+  short_description: "先收集部署需求，再生成含硬件与框架建议的两档模型推理方案"
+  default_prompt: "使用 $model-private-skill 先收集部署模型、负载和 SLO；信息齐全后给出结论先行的两档私有化推理方案。"

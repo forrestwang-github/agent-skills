@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "github_repository": "forrestwang-github/agent-skills",
+  "visibility": "public",
+  "default_branch": "main",
+  "tag_format": "{skill}-v{version}"
+}
+
