@@ -24,6 +24,7 @@
 - GitHub CLI 已登录。
 - 标签不存在。
 - 未提交改动仅限 `skills/<category>/<skill-name>` 和 `registry/catalog.json`。
+- 根目录和目标 Skill 的 `LICENSE` 一致，仓库声明为 `Apache-2.0`。
 - 不包含密钥、令牌、私钥或不应公开的本地资料。
 
 ## 发布预览

@@ -3,6 +3,6 @@
   "github_repository": "forrestwang-github/agent-skills",
   "visibility": "public",
   "default_branch": "main",
-  "tag_format": "{skill}-v{version}"
+  "tag_format": "{skill}-v{version}",
+  "license": "Apache-2.0"
 }
-

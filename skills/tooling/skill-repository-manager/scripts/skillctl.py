@@ -25,6 +25,8 @@ REGISTRY_DIR = "registry"
 CATALOG_FILE = Path(REGISTRY_DIR) / "catalog.json"
 REPOSITORY_FILE = Path(REGISTRY_DIR) / "repository.json"
 SKILLS_DIR = "skills"
+LICENSE_FILE = "LICENSE"
+EXPECTED_LICENSE = "Apache-2.0"
 FRONTMATTER_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)", re.S)
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SEMVER_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
@@ -119,6 +121,17 @@ def validate_skill(root: Path, name: str) -> dict[str, Any]:
         errors.append(f"Skill path must be inside repository {SKILLS_DIR}/ directory")
     if relative_skill.parts and (len(relative_skill.parts) != 2 or relative_skill.name != name):
         errors.append(f"Skill path must use {SKILLS_DIR}/<category>/{name}")
+    repository = load_json(root / REPOSITORY_FILE)
+    if repository.get("license") != EXPECTED_LICENSE:
+        errors.append(f"Repository license must be {EXPECTED_LICENSE}")
+    root_license = root / LICENSE_FILE
+    skill_license = skill_dir / LICENSE_FILE
+    if not root_license.is_file():
+        errors.append(f"Repository {LICENSE_FILE} not found")
+    if not skill_license.is_file():
+        errors.append(f"Skill {LICENSE_FILE} not found")
+    elif root_license.is_file() and file_hash(root_license) != file_hash(skill_license):
+        errors.append(f"Skill {LICENSE_FILE} does not match repository {LICENSE_FILE}")
     skill_md = skill_dir / "SKILL.md"
     if not skill_md.is_file():
         errors.append("SKILL.md not found")
