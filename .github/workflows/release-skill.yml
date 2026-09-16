@@ -34,7 +34,7 @@ jobs:
           tag="${GITHUB_REF_NAME}"
           mkdir -p dist
           (cd "$(dirname "$skill_path")" && zip -r "$GITHUB_WORKSPACE/dist/${tag}.zip" "$(basename "$skill_path")")
-          sha256sum "dist/${tag}.zip" > "dist/${tag}.sha256"
+          (cd dist && sha256sum "${tag}.zip" > "${tag}.sha256")
       - name: Ensure release exists and upload assets
         env:
           GH_TOKEN: ${{ github.token }}

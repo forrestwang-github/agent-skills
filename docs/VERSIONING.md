@@ -4,6 +4,10 @@
 
 本仓库采用 monorepo，但每个 Skill 独立维护语义化版本。版本和发布标签记录在 `registry/catalog.json`。
 
+- `version` 表示该 Skill 当前登记的版本号。
+- `release_tag` 表示最新正式发布所使用的不可变 Git 标签。
+- `release_tag: null` 表示该 Skill 尚未正式发布，只能视为开发状态。
+
 - `PATCH`：向后兼容的修正、措辞调整或小范围行为纠正。
 - `MINOR`：向后兼容的新能力、新参考资料或新操作模式。
 - `MAJOR`：删除或重命名关键能力、改变默认路径或输出契约、要求使用者迁移。
@@ -19,6 +23,8 @@
 ```
 
 标签指向完整仓库快照，但 Release ZIP 只打包对应 Skill。不要使用浮动标签覆盖既有版本，也不要重写已发布标签。
+
+GitHub 的 “Latest” 标识是整个仓库级别的，只能指向一个 Release，不能表示每个 Skill 的最新版本。判断某个 Skill 的最新稳定版本时，以 README 和 `registry/catalog.json` 中该 Skill 的 `release_tag` 为准。
 
 ## 开发分支
 

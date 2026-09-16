@@ -5,7 +5,7 @@
 - 目标 Skill 已在 `registry/catalog.json` 注册。
 - `SKILL.md`、引用文件和 Agent 元数据校验通过。
 - Skill 内的 `LICENSE` 与仓库根许可证完全一致。
-- 测试和确定性校验通过。
+- 目标 Skill 自己的测试和确定性校验通过；通用发布命令只保证仓库结构校验，不自动推断每个 Skill 的专用测试命令。
 - 工作区只包含预期变更，不含凭据、本地样本或生成产物。
 - 当前分支和 GitHub 远程与 `registry/repository.json` 一致。
 
@@ -29,13 +29,19 @@ python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root .
 4. 创建并推送带注释标签。
 5. 创建 GitHub Release。
 6. GitHub Actions 打包 Skill ZIP 并生成 SHA-256。
-7. 核验远端 Release 和附件。
+7. 等待对应标签的 GitHub Actions 完成。
+8. 核验 Release、ZIP、SHA-256 和固定版本目录链接。
+9. 输出完整验收结果。
 
-不强制推送，不覆盖既有标签，不以重写历史的方式修复发布失败。部分步骤失败时，应保留已成功的远端状态并从安全步骤重试。
+不强制推送，不覆盖既有标签，不以重写历史的方式修复发布失败。部分步骤失败时，应保留已成功的远端状态并从安全步骤重试。远端发布已存在但验收中断时，可以执行：
+
+```powershell
+python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root . --json verify-release skill-repository-manager --tag skill-repository-manager-v1.1.0
+```
 
 ## Release 内容
 
-Release Notes 应说明主要变化、修复、不兼容项、安装链接和更新建议。附件至少包括：
+Release Notes 建议说明主要变化、修复、不兼容项、安装链接和更新建议。默认自动生成的 Release Notes 可能只包含 Git 提交摘要；重要版本应提供人工整理的说明。附件至少包括：
 
 ```text
 <skill-name>-v<version>.zip

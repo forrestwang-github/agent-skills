@@ -2,7 +2,7 @@
 
 个人 Agent Skill 的公开源码仓库。可安装 Skill 统一位于 `skills/`，仓库注册信息位于 `registry/`；`skill-repository-manager` 提供校验、安装、更新、回滚和语义化发布能力。
 
-稳定使用者应安装带版本标签的 Skill 子目录，不直接依赖 `main`。示例标签：`book-knowledge-guide-v1.1.0`。
+稳定使用者应安装带版本标签的 Skill 子目录，不直接依赖 `main`。示例标签：`book-knowledge-guide-v1.0.0`。
 
 ## Skill 目录
 
@@ -18,17 +18,36 @@
 
 当前版本和正式发布标签以 [`registry/catalog.json`](registry/catalog.json) 为准。
 
-## 对话使用
+## 快速开始
+
+1. 在上方表格中点击目标 Skill 的“固定版本”。
+2. 复制打开后的 GitHub 子目录地址。
+3. 把链接交给支持 GitHub Skill 安装的 Agent，例如：“请从这个 GitHub 子目录安装 Skill，完成后告诉我安装目录和验证结果。”
+4. 安装完成后新建会话，使 Agent 重新发现 Skill。
+
+固定版本子目录适合交给 Agent 安装；Release 页面中的 ZIP 适合手动下载、审查和归档。`main` 仅用于评估尚未发布的开发内容。
+
+## 安装和更新
 
 安装 `skill-repository-manager` 后，可以直接告诉 Agent：
 
-- 检查所有 Skill。
+- 检查某个 Skill 是否有更新。
 - 安装或更新某个 Skill。
-- 准备发布某个 Skill。
-- 确认发布。
+- 比较源码与安装副本。
 - 回滚上次更新。
 
-管理操作默认先预览；安装、更新、回滚和发布在确认后执行。
+安装、更新和回滚默认先预览，确认后执行。
+
+## 维护本仓库
+
+仓库维护者还可以通过对话要求 Agent：
+
+- 登记新开发的 Skill。
+- 同步许可证和 README 目录。
+- 准备并确认发布某个 Skill。
+- 验收已发布版本。
+
+涉及文件、Git 或 GitHub 状态变更的操作会先展示计划，再请求确认。
 
 ## 仓库结构
 
@@ -41,10 +60,10 @@ skills/             按使用场景分类的可安装 Skill 源码
   tooling/           Skill 开发和仓库管理工具
 ```
 
-从 GitHub 安装单个 Skill 时，使用 `skills/<category>/<skill-name>` 子目录。例如：
+从 GitHub 安装单个 Skill 时，应使用带标签的 `skills/<category>/<skill-name>` 子目录。例如：
 
 ```text
-https://github.com/forrestwang-github/agent-skills/tree/main/skills/personal-learning/book-knowledge-guide
+https://github.com/forrestwang-github/agent-skills/tree/book-knowledge-guide-v1.0.0/skills/personal-learning/book-knowledge-guide
 ```
 
 完整的版本选择、安装、更新和校验说明见 [安装文档](docs/INSTALLATION.md)。
