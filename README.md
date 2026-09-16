@@ -15,8 +15,8 @@
     <tr>
       <td rowspan="1">工具（tooling）</td>
       <td><a href="skills/tooling/skill-repository-manager/"><code>skill-repository-manager</code></a></td>
-      <td><a href="https://github.com/forrestwang-github/agent-skills/releases/tag/skill-repository-manager-v1.1.0"><code>v1.1.0</code></a></td>
-      <td><a href="https://github.com/forrestwang-github/agent-skills/tree/skill-repository-manager-v1.1.0/skills/tooling/skill-repository-manager">固定版本</a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/releases/tag/skill-repository-manager-v1.1.1"><code>v1.1.1</code></a></td>
+      <td><a href="https://github.com/forrestwang-github/agent-skills/tree/skill-repository-manager-v1.1.1/skills/tooling/skill-repository-manager">固定版本</a></td>
       <td>通过对话校验、安装、更新和发布个人 Skill。</td>
     </tr>
     <tr>
