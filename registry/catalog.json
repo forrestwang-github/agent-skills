@@ -27,7 +27,7 @@
       "name": "skill-repository-manager",
       "path": "skills/tooling/skill-repository-manager",
       "version": "1.0.0",
-      "release_tag": null,
+      "release_tag": "skill-repository-manager-v1.0.0",
       "description": "通过对话校验、安装、更新和发布个人 Skill。"
     },
     {
