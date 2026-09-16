@@ -19,6 +19,8 @@ jobs:
           python-version: "3.11"
       - name: Validate catalog and skills
         run: python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root . --json verify --all
+      - name: Test repository manager
+        run: python -m unittest discover -s skills/tooling/skill-repository-manager/tests -p "test_*.py"
 
   test-model-private-skill:
     runs-on: ${{ matrix.os }}

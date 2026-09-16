@@ -27,6 +27,8 @@ REPOSITORY_FILE = Path(REGISTRY_DIR) / "repository.json"
 SKILLS_DIR = "skills"
 LICENSE_FILE = "LICENSE"
 EXPECTED_LICENSE = "Apache-2.0"
+README_START = "<!-- skill-catalog:start -->"
+README_END = "<!-- skill-catalog:end -->"
 FRONTMATTER_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)", re.S)
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SEMVER_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
@@ -106,6 +108,78 @@ def parse_frontmatter(skill_md: Path) -> dict[str, str]:
         key, value = raw.split(":", 1)
         values[key.strip()] = value.strip().strip("\"'")
     return values
+
+
+def catalog_sort_key(entry: dict[str, Any]) -> tuple[int, str, str]:
+    path = Path(str(entry.get("path", "")))
+    category = path.parts[1] if len(path.parts) >= 3 else ""
+    category_order = {"work": 0, "personal-learning": 1, "tooling": 2}
+    return category_order.get(category, 99), category, str(entry.get("name", ""))
+
+
+def render_readme_catalog(data: dict[str, Any]) -> str:
+    lines = [README_START, "| Skill | 分类 | 用途 |", "|---|---|---|"]
+    for entry in sorted(data["skills"], key=catalog_sort_key):
+        name = str(entry["name"])
+        path = str(entry["path"]).replace("\\", "/")
+        parts = Path(path).parts
+        category = parts[1] if len(parts) >= 3 else ""
+        description = " ".join(str(entry.get("description", "")).split()).replace("|", "\\|")
+        lines.append(f"| [`{name}`]({path}/) | {category} | {description} |")
+    lines.append(README_END)
+    return "\n".join(lines)
+
+
+def replace_readme_catalog(text: str, data: dict[str, Any]) -> str:
+    start = text.find(README_START)
+    end = text.find(README_END)
+    if start < 0 or end < 0 or end < start:
+        raise SkillCtlError("README.md is missing valid skill catalog markers")
+    end += len(README_END)
+    return text[:start] + render_readme_catalog(data) + text[end:]
+
+
+def sync_readme_catalog(root: Path, data: dict[str, Any]) -> bool:
+    path = root / "README.md"
+    current = path.read_text(encoding="utf-8")
+    updated = replace_readme_catalog(current, data)
+    if updated == current:
+        return False
+    path.write_text(updated, encoding="utf-8")
+    return True
+
+
+def validate_repository(root: Path) -> list[str]:
+    errors: list[str] = []
+    data = catalog(root)
+    entries = data["skills"]
+    names = [str(item.get("name", "")) for item in entries]
+    paths = [str(item.get("path", "")).replace("\\", "/") for item in entries]
+    if len(names) != len(set(names)):
+        errors.append("Catalog contains duplicate skill names")
+    if len(paths) != len(set(paths)):
+        errors.append("Catalog contains duplicate skill paths")
+    listed = set(paths)
+    discovered = {
+        path.parent.relative_to(root).as_posix()
+        for path in (root / SKILLS_DIR).glob("*/*/SKILL.md")
+    }
+    for path in sorted(discovered - listed):
+        errors.append(f"Unregistered skill directory: {path}")
+    for path in sorted(listed - discovered):
+        errors.append(f"Catalog path has no SKILL.md: {path}")
+    readme_path = root / "README.md"
+    if not readme_path.is_file():
+        errors.append("README.md not found")
+    else:
+        current = readme_path.read_text(encoding="utf-8")
+        try:
+            expected = replace_readme_catalog(current, data)
+            if expected != current:
+                errors.append("README skill catalog is out of sync with registry/catalog.json")
+        except SkillCtlError as exc:
+            errors.append(str(exc))
+    return errors
 
 
 def validate_skill(root: Path, name: str) -> dict[str, Any]:
@@ -251,7 +325,91 @@ def command_verify(args: argparse.Namespace, root: Path) -> dict[str, Any]:
     if not names or names == [None]:
         raise SkillCtlError("Specify a skill name or --all")
     results = [validate_skill(root, name) for name in names]
-    return {"ok": all(item["valid"] for item in results), "operation": "verify", "results": results}
+    repository_errors = validate_repository(root)
+    return {"ok": all(item["valid"] for item in results) and not repository_errors, "operation": "verify", "repository_errors": repository_errors, "results": results}
+
+
+def command_register(args: argparse.Namespace, root: Path) -> dict[str, Any]:
+    if not NAME_RE.fullmatch(args.skill):
+        raise SkillCtlError("Skill name must be lowercase hyphen-case")
+    if not NAME_RE.fullmatch(args.category):
+        raise SkillCtlError("Category must be lowercase hyphen-case")
+    if not SEMVER_RE.fullmatch(args.version):
+        raise SkillCtlError("Version must use MAJOR.MINOR.PATCH")
+    data = catalog(root)
+    if any(item.get("name") == args.skill for item in data["skills"]):
+        raise SkillCtlError(f"Skill is already registered: {args.skill}")
+    relative_path = f"{SKILLS_DIR}/{args.category}/{args.skill}"
+    if any(str(item.get("path", "")).replace("\\", "/") == relative_path for item in data["skills"]):
+        raise SkillCtlError(f"Skill path is already registered: {relative_path}")
+    skill_dir = root / relative_path
+    skill_md = skill_dir / "SKILL.md"
+    if not skill_md.is_file():
+        raise SkillCtlError(f"SKILL.md not found: {skill_md}")
+    metadata = parse_frontmatter(skill_md)
+    if metadata.get("name") != args.skill:
+        raise SkillCtlError(f"Frontmatter name must be {args.skill}")
+    description = args.description or metadata.get("description", "")
+    if not description:
+        raise SkillCtlError("Skill description is missing")
+    root_license = root / LICENSE_FILE
+    if not root_license.is_file():
+        raise SkillCtlError(f"Repository {LICENSE_FILE} not found")
+    skill_license = skill_dir / LICENSE_FILE
+    if not skill_license.exists():
+        license_action = "create"
+    elif file_hash(skill_license) != file_hash(root_license):
+        license_action = "replace"
+    else:
+        license_action = "unchanged"
+    plan = {"operation": "register", "skill": args.skill, "category": args.category, "path": relative_path, "version": args.version, "description": description, "license_action": license_action, "readme_update": True}
+    if not args.yes:
+        return {"ok": True, "preview": True, **plan}
+    original_catalog = (root / CATALOG_FILE).read_bytes()
+    original_readme = (root / "README.md").read_bytes()
+    original_license = skill_license.read_bytes() if skill_license.exists() else None
+    try:
+        shutil.copy2(root_license, skill_license)
+        data["skills"].append({"name": args.skill, "path": relative_path, "version": args.version, "release_tag": None, "description": description})
+        data["skills"].sort(key=catalog_sort_key)
+        write_json(root / CATALOG_FILE, data)
+        sync_readme_catalog(root, data)
+        verification = command_verify(argparse.Namespace(all=True, skill=None), root)
+        if not verification["ok"]:
+            raise SkillCtlError(f"Post-registration validation failed: {verification}")
+    except Exception:
+        (root / CATALOG_FILE).write_bytes(original_catalog)
+        (root / "README.md").write_bytes(original_readme)
+        if original_license is None:
+            skill_license.unlink(missing_ok=True)
+        else:
+            skill_license.write_bytes(original_license)
+        raise
+    return {"ok": True, "preview": False, **plan, "verified": True}
+
+
+def command_sync(args: argparse.Namespace, root: Path) -> dict[str, Any]:
+    data = catalog(root)
+    root_license = root / LICENSE_FILE
+    if not root_license.is_file():
+        raise SkillCtlError(f"Repository {LICENSE_FILE} not found")
+    license_updates: list[str] = []
+    for entry in data["skills"]:
+        skill_license = root / entry["path"] / LICENSE_FILE
+        if not skill_license.is_file() or file_hash(skill_license) != file_hash(root_license):
+            license_updates.append(str(entry["name"]))
+    readme = (root / "README.md").read_text(encoding="utf-8")
+    readme_update = replace_readme_catalog(readme, data) != readme
+    plan = {"operation": "sync", "license_updates": license_updates, "readme_update": readme_update}
+    if not args.yes:
+        return {"ok": True, "preview": True, **plan}
+    for entry in data["skills"]:
+        shutil.copy2(root_license, root / entry["path"] / LICENSE_FILE)
+    sync_readme_catalog(root, data)
+    verification = command_verify(argparse.Namespace(all=True, skill=None), root)
+    if not verification["ok"]:
+        raise SkillCtlError(f"Post-sync validation failed: {verification}")
+    return {"ok": True, "preview": False, **plan, "verified": True}
 
 
 def command_status(args: argparse.Namespace, root: Path) -> dict[str, Any]:
@@ -489,6 +647,16 @@ def build_parser() -> argparse.ArgumentParser:
     verify.add_argument("skill", nargs="?")
     verify.add_argument("--all", action="store_true")
 
+    register = sub.add_parser("register")
+    register.add_argument("skill")
+    register.add_argument("--category", required=True)
+    register.add_argument("--version", default="1.0.0")
+    register.add_argument("--description")
+    register.add_argument("--yes", action="store_true")
+
+    sync = sub.add_parser("sync")
+    sync.add_argument("--yes", action="store_true")
+
     for name in ("status", "diff", "check"):
         cmd = sub.add_parser(name)
         cmd.add_argument("skill")
@@ -536,6 +704,10 @@ def main() -> int:
         root = find_repo_root(args.repo_root)
         if args.command == "verify":
             payload = command_verify(args, root)
+        elif args.command == "register":
+            payload = command_register(args, root)
+        elif args.command == "sync":
+            payload = command_sync(args, root)
         elif args.command == "status":
             payload = command_status(args, root)
         elif args.command == "diff":

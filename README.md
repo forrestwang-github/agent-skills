@@ -6,14 +6,16 @@
 
 ## Skill 目录
 
+<!-- skill-catalog:start -->
 | Skill | 分类 | 用途 |
 |---|---|---|
-| [`aliyun-bill-analysis-skill`](skills/work/aliyun-bill-analysis-skill/) | work | 分析阿里云账单并生成费用、用量和趋势报告 |
-| [`ding-weekly-report`](skills/work/ding-weekly-report/) | work | 根据工作记录截图生成结构化中文周报 |
-| [`model-private-skill`](skills/work/model-private-skill/) | work | 规划模型私有化推理资源和部署拓扑 |
-| [`book-knowledge-guide`](skills/personal-learning/book-knowledge-guide/) | personal-learning | 深度解读非虚构书籍并沉淀到 Obsidian |
-| [`tech-factor-analysis-html-report`](skills/personal-learning/tech-factor-analysis-html-report/) | personal-learning | 研究技术主题并生成知识笔记和 HTML 报告 |
-| [`skill-repository-manager`](skills/tooling/skill-repository-manager/) | tooling | 通过对话管理、安装、更新和发布 Skill |
+| [`aliyun-bill-analysis-skill`](skills/work/aliyun-bill-analysis-skill/) | work | 分析阿里云账单并生成费用、用量及趋势报告。 |
+| [`ding-weekly-report`](skills/work/ding-weekly-report/) | work | 根据工作记录截图生成结构化中文周报。 |
+| [`model-private-skill`](skills/work/model-private-skill/) | work | 规划模型私有化推理所需的厂商中立资源和拓扑。 |
+| [`book-knowledge-guide`](skills/personal-learning/book-knowledge-guide/) | personal-learning | 深度解读非虚构书籍并沉淀到 Obsidian。 |
+| [`tech-factor-analysis-html-report`](skills/personal-learning/tech-factor-analysis-html-report/) | personal-learning | 研究技术主题并生成知识库 Markdown 与 HTML 报告。 |
+| [`skill-repository-manager`](skills/tooling/skill-repository-manager/) | tooling | 通过对话校验、安装、更新和发布个人 Skill。 |
+<!-- skill-catalog:end -->
 
 当前版本和正式发布标签以 [`registry/catalog.json`](registry/catalog.json) 为准。
 

@@ -31,6 +31,8 @@ description: 通过自然语言管理本地 Skill 源码仓库和各 Agent 的�
 | 用户意图 | 命令 |
 |---|---|
 | 检查或验证 Skill | `verify` |
+| 登记新开发的 Skill | `register`，不传 `--yes` |
+| 同步许可证和 README 清单 | `sync`，不传 `--yes` |
 | 查看安装状态 | `status` |
 | 检查 GitHub 更新 | `check` |
 | 查看源码与安装副本差异 | `diff` |
@@ -43,8 +45,8 @@ description: 通过自然语言管理本地 Skill 源码仓库和各 Agent 的�
 
 ## 安全边界
 
-- `verify`、`status`、`check`、`diff` 和不带 `--yes` 的 `release` 是只读预览，可直接执行。
-- `link`、`install`、`update`、`rollback` 和 `release --yes` 会修改文件或外部状态。先展示脚本返回的计划，再取得一次明确确认。
+- `verify`、`status`、`check`、`diff` 以及不带 `--yes` 的 `register`、`sync` 和 `release` 是只读预览，可直接执行。
+- `register --yes`、`sync --yes`、`link`、`install`、`update`、`rollback` 和 `release --yes` 会修改文件或外部状态。先展示脚本返回的计划，再取得一次明确确认。
 - “发布”授权一次完整发布事务：更新版本、提交、推送、创建标签和 GitHub Release。若用户只说“准备发布”或“看看能不能发布”，不得执行外部变更。
 - 不绕过 GitHub 登录、系统沙箱、分支保护或权限审批。
 - 不使用强制推送，不删除远程标签，不重写 Git 历史。
@@ -53,11 +55,12 @@ description: 通过自然语言管理本地 Skill 源码仓库和各 Agent 的�
 
 ## 对话方式
 
-用户可以直接说“检查所有 Skill”“安装 book-knowledge-guide”“更新到最新版”“准备发布 book-knowledge-guide”“确认发布”或“回滚上次更新”。
+用户可以直接说“登记新 Skill 到 work”“同步许可证和 README”“检查所有 Skill”“安装 book-knowledge-guide”“更新到最新版”“准备发布 book-knowledge-guide”“确认发布”或“回滚上次更新”。
+
+登记新 Skill 时读取 `SKILL.md` 的名称和描述，写入 `registry/catalog.json`，同步根许可证到 Skill，并只重写 README 的受控目录区块。根 `LICENSE`、`SECURITY.md` 和 `docs/` 是仓库级政策文件，不因新增 Skill 自动改写。
 
 准备发布时给出：当前版本、建议版本、变更范围、验证结果、提交信息、目标分支、标签和 Release 标题。确认发布必须与最近一次预览的 Skill、版本和 Git 状态一致；若状态变化，重新预览。
 
 ## 完成验证
 
 每次修改操作后再次执行相应只读命令，确认目标版本、路径、链接或发布状态。告诉用户何时需要新建 Agent 会话才能加载变更。
-

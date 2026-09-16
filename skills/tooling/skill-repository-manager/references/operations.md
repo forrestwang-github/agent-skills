@@ -11,6 +11,14 @@
 
 先执行 `verify`。涉及安装副本时再执行 `status` 或 `diff`。涉及 GitHub 更新时执行 `check`。用 `--json` 获取结构化结果。
 
+## 新 Skill 登记
+
+业务内容由 Skill 创建流程完成后，使用 `register <skill> --category <category>` 登记。预览应包含分类、路径、初始版本、描述、许可证动作和 README 更新；确认后才传入 `--yes`。
+
+登记会把根 `LICENSE` 同步到 Skill、更新 `registry/catalog.json`，并重建 README 中 `skill-catalog` 标记之间的表格。`SECURITY.md`、`docs/` 和 README 其他段落不自动改写。已有登记、路径冲突、frontmatter 名称不一致或登记后校验失败时停止。
+
+根许可证变更或目录表不一致时，先预览 `sync`，确认后执行 `sync --yes`。同步只处理已登记 Skill 的许可证副本和 README 受控目录。
+
 ## 链接
 
 `link` 适合当前开发电脑，让 Agent 直接读取唯一源码。目标已存在时默认拒绝；只有用户确认后才使用 `--replace --yes`，原目录必须先进入备份位置。
@@ -30,4 +38,3 @@ Windows 创建目录链接可能需要开发者模式或管理员权限。失败
 ## 自定义 Agent
 
 没有适配器时使用 `--dest <绝对路径>`。先确认该 Agent 实际扫描该目录；下载成功不等于 Agent 一定兼容 `SKILL.md` 或 `agents/openai.yaml`。
-

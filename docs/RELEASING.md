@@ -13,6 +13,14 @@
 
 使用 `skill-repository-manager` 通过自然语言准备发布。管理器先输出当前版本、目标版本、变更文件、提交信息、标签和 Release 标题；获得一次明确确认后，再执行完整发布事务。
 
+新增 Skill 时，先把源码放入 `skills/<分类>/<skill-name>/`，再用 `register` 登记。先查看预览，确认后增加 `--yes`：
+
+```powershell
+python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root . register <skill-name> --category <分类> --version 0.1.0
+```
+
+登记会更新 `registry/catalog.json`、复制 Apache-2.0 许可证，并重新生成 README 的 Skill 清单。若只需修复许可证副本或重建清单，则使用 `sync`，同样先预览再确认应用。
+
 发布顺序为：
 
 1. 更新 `registry/catalog.json` 中的版本和标签。
