@@ -17,13 +17,6 @@
       "description": "深度解读非虚构书籍并沉淀到 Obsidian。"
     },
     {
-      "name": "ding-weekly-report",
-      "path": "skills/work/ding-weekly-report",
-      "version": "1.0.0",
-      "release_tag": null,
-      "description": "根据工作记录截图生成结构化中文周报。"
-    },
-    {
       "name": "model-private-skill",
       "path": "skills/work/model-private-skill",
       "version": "1.0.0",

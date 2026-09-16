@@ -1,7 +1,0 @@
-interface:
-  display_name: "截图周报生成"
-  short_description: "读取工作记录表截图，分类整理并在当前会话中输出中文周报"
-  default_prompt: "使用 $ding-weekly-report 读取我上传的工作记录截图，并直接生成本周周报。"
-
-policy:
-  allow_implicit_invocation: true

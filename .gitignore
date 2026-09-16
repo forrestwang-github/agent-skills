@@ -10,3 +10,5 @@ build/
 *.zip
 *.sha256
 
+# Local-only personal skills; never publish from this repository.
+/private/
