@@ -2,7 +2,7 @@
 
 本文面向希望使用本仓库 Skill 的用户。先根据目的选择方式；安装单个 Skill 不要求预先安装管理器。
 
-## 先选择使用方式
+## 1. 先选择使用方式
 
 | 你的目的 | 推荐方式 |
 |---|---|
@@ -11,7 +11,7 @@
 | 手动审查、离线安装或归档 | 从 GitHub Release 下载 ZIP，并核对 SHA-256 |
 | 评估尚未发布的最新开发内容 | 使用 `main` 分支链接，并接受内容可能变化的风险 |
 
-## 直接安装一个 Skill
+## 2. 直接安装一个 Skill
 
 稳定使用优先选择具体 Skill 的版本标签，不直接依赖持续变化的 `main`。标签格式为：
 
@@ -35,7 +35,7 @@ https://github.com/forrestwang-github/agent-skills/tree/book-knowledge-guide-v1.
 
 不同 Agent 的目录、清单和元数据格式可能不同。下载成功不代表该 Agent 一定兼容 Codex 风格的 `SKILL.md` 或 `agents/openai.yaml`；应以目标 Agent 的安装说明为准。
 
-## 使用管理器维护多个 Skill
+## 3. 使用管理器维护多个 Skill
 
 `skill-repository-manager` 是可选工具，不是其他 Skill 的安装前置条件。需要持续管理多个 Skill 时，先从 README 的 Skill 目录第一行取得它的固定版本链接，并按上一节的方法安装。
 
@@ -48,7 +48,7 @@ https://github.com/forrestwang-github/agent-skills/tree/book-knowledge-guide-v1.
 
 安装、更新和回滚默认先展示预览，确认后才修改文件。管理器会记录由它安装的版本和内容摘要；如果安装副本已被手工修改，更新默认停止，避免覆盖本地改动。
 
-## 手动下载和验证 Release ZIP
+## 4. 手动下载和验证 Release ZIP
 
 正式版本的 GitHub Release 会提供 Skill ZIP 和 `.sha256` 文件。ZIP 适合审查、归档或交给不支持 GitHub 子目录安装的环境。解压后应确认 Skill 根目录中存在 `SKILL.md` 和与仓库根目录一致的 `LICENSE`。
 
@@ -66,7 +66,7 @@ sha256sum book-knowledge-guide-v1.0.0.zip
 
 将输出的哈希值与 Release 中 `.sha256` 文件的第一列比较，两者必须一致。校验只能证明下载内容与发布附件一致，不能代替对 Skill 权限、脚本和数据处理边界的审查。未来发布生成的校验文件只记录 ZIP 文件名，因此也可以在两个文件位于同一目录时使用 `sha256sum -c`。
 
-## 何时使用 `main`
+## 5. 何时使用 `main`
 
 `main` 代表当前开发状态，不保证内容和行为固定。例如：
 

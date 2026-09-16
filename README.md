@@ -4,7 +4,7 @@
 
 稳定使用者应安装带版本标签的 Skill 子目录，不直接依赖 `main`。示例标签：`book-knowledge-guide-v1.0.0`。
 
-## Skill 目录
+## 1. Skill 目录
 
 <!-- skill-catalog:start -->
 <table>
@@ -51,7 +51,7 @@
 
 当前版本和正式发布标签以 [`registry/catalog.json`](registry/catalog.json) 为准。
 
-## 选择使用方式
+## 2. 选择使用方式
 
 这里有三种不同场景，不需要为了安装一个 Skill 而先安装管理器：
 
@@ -61,7 +61,9 @@
 | 长期管理多个 Skill，需要检查更新、比较差异或回滚 | 先安装 `skill-repository-manager`，再通过对话管理其他 Skill |
 | 开发并发布本仓库中的 Skill | 在本地仓库中使用 `skill-repository-manager` 的登记、校验和发布能力 |
 
-## 快速开始：安装单个 Skill
+完整的版本选择、安装、更新和校验说明见 [安装文档](docs/INSTALLATION.md)。
+
+## 3. 快速开始：安装单个 Skill
 
 1. 在上方表格中点击目标 Skill 的“固定版本”。
 2. 复制打开后的 GitHub 子目录地址。
@@ -70,7 +72,7 @@
 
 固定版本子目录适合交给 Agent 安装；Release 页面中的 ZIP 适合手动下载、审查和归档。`main` 仅用于评估尚未发布的开发内容。
 
-## 使用管理器安装和更新
+## 4. 使用管理器安装和更新
 
 `skill-repository-manager` 是可选的管理工具，不是安装其他 Skill 的前置条件。只有在需要持续管理多个 Skill 时，才建议先用上面的固定版本链接安装它；安装完成并新建会话后，可以直接告诉 Agent：
 
@@ -81,7 +83,7 @@
 
 安装、更新和回滚默认先预览，确认后执行。
 
-## 维护本仓库
+## 5. 维护本仓库
 
 仓库维护者还可以通过对话要求 Agent：
 
@@ -92,7 +94,7 @@
 
 涉及文件、Git 或 GitHub 状态变更的操作会先展示计划，再请求确认。
 
-## 仓库结构
+## 6. 仓库结构
 
 ```text
 .github/workflows/  GitHub 校验与发布自动化
@@ -109,16 +111,14 @@ skills/             按使用场景分类的可安装 Skill 源码
 https://github.com/forrestwang-github/agent-skills/tree/book-knowledge-guide-v1.0.0/skills/personal-learning/book-knowledge-guide
 ```
 
-完整的版本选择、安装、更新和校验说明见 [安装文档](docs/INSTALLATION.md)。
-
-## 版本与发布
+## 7. 版本与发布
 
 每个 Skill 独立采用语义化版本，标签格式为 `<skill-name>-v<version>`。正式 Release 包含可独立安装的 ZIP 和 SHA-256 校验文件。维护规则见 [版本规则](docs/VERSIONING.md) 和 [发布指南](docs/RELEASING.md)。
 
-## 安全
+## 8. 安全
 
 不要把访问令牌、云账号 AK/SK、私钥、个人数据或内部样本提交到仓库。安全问题请按 [安全政策](SECURITY.md) 私密报告。
 
-## License
+## 9. License
 
 本仓库中的代码、Skill 指令、提示词和文档均采用 [Apache License 2.0](LICENSE) 授权，另有明确声明的第三方内容除外。每个可独立安装的 Skill 都携带同一许可证副本。

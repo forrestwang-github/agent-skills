@@ -2,7 +2,7 @@
 
 本文只面向本仓库维护者。普通用户安装或更新 Skill 请阅读 `docs/INSTALLATION.md`，不需要执行这里的 Git 或发布操作。
 
-## 推荐方式：通过对话发布
+## 1. 推荐方式：通过对话发布
 
 可以直接要求已安装 `skill-repository-manager` 的 Agent：
 
@@ -10,7 +10,7 @@
 
 管理器先输出当前版本、目标版本、变更文件、提交信息、标签、Release 标题和验证结果。只有维护者明确确认最近一次预览后，才执行提交、推送、标签和 GitHub Release 等外部变更。如果文件、HEAD、版本或目标标签在确认前发生变化，必须重新准备发布。
 
-## 发布前条件
+## 2. 发布前条件
 
 - 目标 Skill 已在 `registry/catalog.json` 注册。
 - `SKILL.md`、引用文件和 Agent 元数据校验通过。
@@ -20,7 +20,7 @@
 - 当前分支和 GitHub 远程与 `registry/repository.json` 一致。
 - 目标标签在本地和远端都不存在。
 
-## 新增公开 Skill
+## 3. 新增公开 Skill
 
 先把源码放入 `skills/<category>/<skill-name>/`，再通过对话要求管理器登记，或先预览以下命令：
 
@@ -32,7 +32,7 @@ python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root .
 
 仅限本机使用的 Skill 不应登记到公开目录；应放在被 Git 忽略的 `private/` 中。
 
-## 完整发布事务
+## 4. 完整发布事务
 
 确认发布后，管理器依次执行：
 
@@ -48,7 +48,7 @@ python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root .
 
 发布不会强制推送、覆盖既有标签或重写历史。
 
-## 中断与恢复
+## 5. 中断与恢复
 
 发布包含多个不可逆的远端步骤。网络或 GitHub Actions 故障可能发生在提交、标签或 Release 已创建之后；此时不要删除或重建已经成功的对象，应先确认断点，再从安全步骤继续。
 
@@ -60,7 +60,7 @@ python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root .
 
 `verify-release` 会等待对应工作流，并检查 ZIP、SHA-256 和固定版本目录链接。它不会修改 Git 或 GitHub 状态。
 
-## Release 内容
+## 6. Release 内容
 
 Release Notes 建议说明主要变化、修复、不兼容项、安装链接和更新建议。默认自动生成的 Release Notes 可能只包含 Git 提交摘要；重要版本应提供人工整理的说明。附件至少包括：
 
