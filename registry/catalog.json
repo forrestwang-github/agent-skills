@@ -34,7 +34,7 @@
       "name": "tech-factor-analysis-html-report",
       "path": "skills/personal-learning/tech-factor-analysis-html-report",
       "version": "2.0.1",
-      "release_tag": null,
+      "release_tag": "tech-factor-analysis-html-report-v2.0.1",
       "description": "研究技术主题并生成知识库 Markdown 与 HTML 报告。"
     }
   ]
