@@ -21,11 +21,14 @@
 ```text
 .github/workflows/  GitHub 校验与发布自动化
 registry/           仓库配置和 Skill 目录
-skills/             可独立安装的 Skill 源码
+skills/             按使用场景分类的可安装 Skill 源码
+  work/              工作场景
+  personal-learning/ 个人学习与知识沉淀
+  tooling/           Skill 开发和仓库管理工具
 ```
 
-从 GitHub 安装单个 Skill 时，使用 `skills/<skill-name>` 子目录。例如：
+从 GitHub 安装单个 Skill 时，使用 `skills/<category>/<skill-name>` 子目录。例如：
 
 ```text
-https://github.com/forrestwang-github/agent-skills/tree/main/skills/book-knowledge-guide
+https://github.com/forrestwang-github/agent-skills/tree/main/skills/personal-learning/book-knowledge-guide
 ```

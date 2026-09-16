@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Validate catalog and skills
-        run: python skills/skill-repository-manager/scripts/skillctl.py --repo-root . --json verify --all
+        run: python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root . --json verify --all
 
   test-model-private-skill:
     runs-on: ${{ matrix.os }}
@@ -33,8 +33,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Run unit tests
-        run: python -m unittest discover -s skills/model-private-skill/tests -p "test_*.py"
+        run: python -m unittest discover -s skills/work/model-private-skill/tests -p "test_*.py"
       - name: Validate example input
-        run: python skills/model-private-skill/cli/model-private-skill.py validate-input --input skills/model-private-skill/examples/7b-request.json
+        run: python skills/work/model-private-skill/cli/model-private-skill.py validate-input --input skills/work/model-private-skill/examples/7b-request.json
       - name: Validate GPU catalog
-        run: python skills/model-private-skill/cli/model-private-skill.py gpu validate
+        run: python skills/work/model-private-skill/cli/model-private-skill.py gpu validate

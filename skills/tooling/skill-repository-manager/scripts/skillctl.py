@@ -111,8 +111,14 @@ def validate_skill(root: Path, name: str) -> dict[str, Any]:
     skill_dir = (root / entry.get("path", name)).resolve()
     errors: list[str] = []
     warnings: list[str] = []
-    if skill_dir.parent != (root / SKILLS_DIR).resolve():
-        errors.append(f"Skill path must be a direct child of repository {SKILLS_DIR}/ directory")
+    skills_root = (root / SKILLS_DIR).resolve()
+    try:
+        relative_skill = skill_dir.relative_to(skills_root)
+    except ValueError:
+        relative_skill = Path()
+        errors.append(f"Skill path must be inside repository {SKILLS_DIR}/ directory")
+    if relative_skill.parts and (len(relative_skill.parts) != 2 or relative_skill.name != name):
+        errors.append(f"Skill path must use {SKILLS_DIR}/<category>/{name}")
     skill_md = skill_dir / "SKILL.md"
     if not skill_md.is_file():
         errors.append("SKILL.md not found")

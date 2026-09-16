@@ -23,7 +23,7 @@
 - Git 仓库、远程和当前分支符合配置。
 - GitHub CLI 已登录。
 - 标签不存在。
-- 未提交改动仅限 `skills/<skill-name>` 和 `registry/catalog.json`。
+- 未提交改动仅限 `skills/<category>/<skill-name>` 和 `registry/catalog.json`。
 - 不包含密钥、令牌、私钥或不应公开的本地资料。
 
 ## 发布预览

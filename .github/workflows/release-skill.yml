@@ -22,15 +22,18 @@ jobs:
         run: |
           tag="${GITHUB_REF_NAME}"
           skill="${tag%-v*}"
-          python skills/skill-repository-manager/scripts/skillctl.py --repo-root . --json verify "$skill"
+          python skills/tooling/skill-repository-manager/scripts/skillctl.py --repo-root . --json verify "$skill"
+          skill_path="$(jq -r --arg skill "$skill" '.skills[] | select(.name == $skill) | .path' registry/catalog.json)"
+          test -n "$skill_path" && test "$skill_path" != "null"
           echo "skill=$skill" >> "$GITHUB_OUTPUT"
+          echo "skill_path=$skill_path" >> "$GITHUB_OUTPUT"
       - name: Package
         shell: bash
         run: |
-          skill="${{ steps.meta.outputs.skill }}"
+          skill_path="${{ steps.meta.outputs.skill_path }}"
           tag="${GITHUB_REF_NAME}"
           mkdir -p dist
-          (cd skills && zip -r "../dist/${tag}.zip" "$skill")
+          (cd "$(dirname "$skill_path")" && zip -r "$GITHUB_WORKSPACE/dist/${tag}.zip" "$(basename "$skill_path")")
           sha256sum "dist/${tag}.zip" > "dist/${tag}.sha256"
       - name: Ensure release exists and upload assets
         env:

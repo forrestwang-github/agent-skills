@@ -16,13 +16,13 @@ Python核心没有第三方运行时依赖。
 本 Skill 由统一仓库 `forrestwang-github/agent-skills` 发布。支持从 GitHub 子目录安装的 Agent，可以使用精确版本链接：
 
 ```text
-https://github.com/forrestwang-github/agent-skills/tree/model-private-skill-v<VERSION>/skills/model-private-skill
+https://github.com/forrestwang-github/agent-skills/tree/model-private-skill-v<VERSION>/skills/work/model-private-skill
 ```
 
 开发分支地址仅用于查看最新源码，不建议作为稳定安装版本：
 
 ```text
-https://github.com/forrestwang-github/agent-skills/tree/main/skills/model-private-skill
+https://github.com/forrestwang-github/agent-skills/tree/main/skills/work/model-private-skill
 ```
 
 完整使用方式和固定 HTML 输出格式见 [SKILL.md](SKILL.md) 及 [HTML 输出模板](core/model_private_skill/references/html-output-template.md)。
